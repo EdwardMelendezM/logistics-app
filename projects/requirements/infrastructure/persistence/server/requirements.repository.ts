@@ -63,6 +63,7 @@ export class RequirementsServerRepository implements RequirementsRepository {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             })
+            return {id: requirementId, error: null};
         } catch (error) {
             if (error instanceof Error) {
                 return {id: '', error: error};
@@ -90,6 +91,7 @@ export class RequirementsServerRepository implements RequirementsRepository {
                     updated_at: new Date().toISOString(),
                 })
             }
+            return {id: requirementId, error: null};
         } catch (error) {
             if (error instanceof Error) {
                 return {id: '', error: error};

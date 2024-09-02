@@ -1,8 +1,8 @@
-import {PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
-import type {createRequirementBody, requirement} from "@/projects/requirements/domain/requirements.entity";
+import {FullError, PaginationParams, PaginationResults} from "@/projects/shared/results/domain/resullts.entity";
+import type {Requirement, CreateRequirementBody} from "@/projects/requirements/domain/requirements.entity";
 
 export interface RequirementsUseCase {
-    getRequirements(pagination: PaginationParams): Promise<{ requirements: requirement[], error: Error | null }>
+    getRequirements(pagination: PaginationParams): Promise<{ requirements: Requirement[], pagination: PaginationResults, error: FullError }>
 
-    createRequirement(requirementId: string, body: createRequirementBody): Promise<{ id: string, error: Error | null }>
+    createRequirement(requirementId: string, body: CreateRequirementBody): Promise<{ id: string, error: FullError }>
 }

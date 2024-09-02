@@ -20,4 +20,10 @@ export type PaginationParams = {
     sizePage: number;
 }
 
+export type PaginationResults = {
+    total: number;
+    page: number;
+    sizePage: number;
+}
+
 export type FullError = Error | null
