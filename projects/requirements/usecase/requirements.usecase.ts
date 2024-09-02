@@ -36,12 +36,6 @@ export class RequirementsUCase implements RequirementsUseCase {
                 page: pagination.page,
                 sizePage: pagination.sizePage
             }
-            console.log({
-                requirements,
-                paginationResults,
-                errorGetRequirement,
-                errorGetTotalRequirement
-            })
 
             if (errorGetTotalRequirement || errorGetRequirement) {
                 return {
