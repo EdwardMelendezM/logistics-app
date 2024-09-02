@@ -4,5 +4,5 @@ import type {Requirement, CreateRequirementBody} from "@/projects/requirements/d
 export interface RequirementsUseCase {
     getRequirements(pagination: PaginationParams): Promise<{ requirements: Requirement[], pagination: PaginationResults, error: FullError }>
 
-    createRequirement(requirementId: string, body: CreateRequirementBody): Promise<{ id: string, error: FullError }>
+    createRequirement(body: CreateRequirementBody): Promise<{ id: string, error: FullError }>
 }

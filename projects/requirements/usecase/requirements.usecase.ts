@@ -1,12 +1,14 @@
 import {inject, injectable} from "inversify";
 import {v4 as uuid} from 'uuid';
-import {RequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase";
+
 import {FullError, PaginationParams, PaginationResults} from "@/projects/shared/results/domain/resullts.entity";
+
 import type {
     CreateRequirementBody,
     Requirement,
     CreateRequirement
 } from "@/projects/requirements/domain/requirements.entity";
+import {RequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase";
 import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
 
 @injectable()
@@ -65,7 +67,7 @@ export class RequirementsUCase implements RequirementsUseCase {
         }
     }
 
-    async createRequirement(requirementId: string, body: CreateRequirementBody): Promise<{
+    async createRequirement(body: CreateRequirementBody): Promise<{
         id: string;
         error: FullError
     }> {
@@ -75,7 +77,6 @@ export class RequirementsUCase implements RequirementsUseCase {
                 description: body.description,
                 status: body.status,
                 priority: body.priority,
-                created_by: requirementId,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 details: body.details.map(detail => ({

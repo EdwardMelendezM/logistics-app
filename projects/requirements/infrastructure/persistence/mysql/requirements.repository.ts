@@ -7,7 +7,7 @@ import {FullError, PaginationParams} from "@/projects/shared/results/domain/resu
 import {
     requirementDetailsTable,
     requirementTable
-} from "@/projects/requirements/infrastructure/persistence/server/requirements.schema";
+} from "@/projects/requirements/infrastructure/persistence/mysql/requirements.schema";
 import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
 import type {
     Requirement,
@@ -16,7 +16,7 @@ import type {
 import {db} from "@/projects/shared/drizzle";
 
 @injectable()
-export class RequirementsServerRepository implements RequirementsRepository {
+export class RequirementsMySqlRepository implements RequirementsRepository {
     async getRequirements(pagination: PaginationParams): Promise<{ requirements: Requirement[], error: FullError }> {
         try {
             const {page = 1, sizePage = 100} = pagination
@@ -117,10 +117,12 @@ export class RequirementsServerRepository implements RequirementsRepository {
             await db.transaction(async (tx) => {
                 const {_, errorCreateRequirement} = await this.createRequirement(tx, requirementId, body)
                 if (errorCreateRequirement) {
+                    tx.rollback()
                     throw errorCreateRequirement
                 }
                 const {__, errorCreateRequirementDetails} = await this.createRequirementDetail(tx, requirementId, body)
                 if (errorCreateRequirementDetails) {
+                    tx.rollback()
                     throw errorCreateRequirementDetails
                 }
             });
