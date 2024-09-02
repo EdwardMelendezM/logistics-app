@@ -1,7 +1,7 @@
 import {getRequirementsAction} from "@/app/actions/actions";
 
-export default function Home() {
-    const {requirements = [], error} = getRequirementsAction({page: 1, sizePage: 100})
+export default async function Home() {
+    const {requirements = [], pagination, error} = await getRequirementsAction({page: 1, sizePage: 100})
     console.log(requirements, error)
     if (error) {
         return <div>Error: {error.message}</div>

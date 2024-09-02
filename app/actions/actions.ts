@@ -41,8 +41,12 @@ export async function getRequirementsAction(pagination: { page: number, sizePage
         } = await requirementsUseCase.getRequirements(pagination)
         return {
             requirements,
-            pagination: paginationResults,
-            error
+            pagination: {
+                total: 0,
+                page: pagination.page,
+                sizePage: pagination.sizePage
+            },
+            error: null
         }
     } catch (error) {
         return {

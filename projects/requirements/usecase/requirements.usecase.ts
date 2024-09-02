@@ -10,11 +10,12 @@ import type {
 } from "@/projects/requirements/domain/requirements.entity";
 import {RequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase";
 import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
+import {DI_SYMBOLS} from "@/projects/types";
 
 @injectable()
 export class RequirementsUCase implements RequirementsUseCase {
     constructor(
-        @inject("RequirementsRepository") private requirementsRepository: RequirementsRepository,
+        @inject(DI_SYMBOLS.RequirementsRepository) private requirementsRepository: RequirementsRepository,
     ) {
     }
 
