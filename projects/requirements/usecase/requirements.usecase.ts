@@ -29,8 +29,8 @@ export class RequirementsUCase implements RequirementsUseCase {
 
             const [totalResult, requirementsResult] = results;
 
-            const { total, error: errorGetTotalRequirement } = totalResult;
-            const { requirements, error: errorGetRequirement } = requirementsResult;
+            const {total, error: errorGetTotalRequirement} = totalResult;
+            const {requirements, error: errorGetRequirement} = requirementsResult;
 
             const paginationResults: PaginationResults = {
                 total,
@@ -69,25 +69,42 @@ export class RequirementsUCase implements RequirementsUseCase {
         id: string;
         error: FullError
     }> {
-        // const newRequirementId = uuid();
-        // const newRequirement: CreateRequirement = {
-        //     description: body.description,
-        //     status: body.status,
-        //     priority: body.priority,
-        //     created_by: requirementId,
-        //     created_at: new Date().toISOString(),
-        //     updated_at: new Date().toISOString(),
-        //     details: body.details.map(detail => ({
-        //         id: uuid(),
-        //         requirement_id: newRequirementId,
-        //         description: detail.description,
-        //         status: detail.status,
-        //         priority: detail.priority,
-        //         created_at: new Date().toISOString(),
-        //         updated_at: new Date().toISOString(),
-        //     }))
-        // }
-        throw new Error("Method not implemented.");
+        try {
+            const newRequirementId = uuid();
+            const newRequirement: CreateRequirement = {
+                description: body.description,
+                status: body.status,
+                priority: body.priority,
+                created_by: requirementId,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                details: body.details.map(detail => ({
+                    id: uuid(),
+                    requirement_id: newRequirementId,
+                    description: detail.description,
+                    status: detail.status,
+                    priority: detail.priority,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                }))
+            }
+            const {
+                id,
+                error
+            } = await this.requirementsRepository.mainCreateRequirement(newRequirementId, newRequirement);
+            if (error) {
+                throw error;
+            }
+            return {
+                id,
+                error: null
+            }
+        } catch (error) {
+            return {
+                id: '',
+                error: error instanceof Error ? error : new Error('Unexpected error')
+            }
+        }
 
     }
 

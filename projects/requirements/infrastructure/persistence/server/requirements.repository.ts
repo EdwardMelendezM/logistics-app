@@ -4,9 +4,15 @@ import {count, isNull} from "drizzle-orm";
 
 import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
 
-import {requirementDetailsTable, requirementTable} from "@/projects/requirements/domain/requirements.schema";
+import {
+    requirementDetailsTable,
+    requirementTable
+} from "@/projects/requirements/infrastructure/persistence/server/requirements.schema";
 import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
-import type {Requirement, CreateRequirement} from "@/projects/requirements/domain/requirements.entity";
+import type {
+    Requirement,
+    CreateRequirement,
+} from "@/projects/requirements/domain/requirements.entity";
 import {db} from "@/projects/shared/drizzle";
 
 @injectable()
@@ -47,7 +53,7 @@ export class RequirementsServerRepository implements RequirementsRepository {
     }
 
     async createRequirement(
-        tx: MySqlTransaction<typeof db, db>,
+        tx: MySqlTransaction<any, any, any, any>,
         requirementId: string,
         body: CreateRequirement
     ): Promise<{
@@ -73,7 +79,7 @@ export class RequirementsServerRepository implements RequirementsRepository {
     }
 
     async createRequirementDetail(
-        tx: MySqlTransaction<typeof db, db>,
+        tx: MySqlTransaction<any, any, any, any>,
         requirementId: string,
         body: CreateRequirement
     ): Promise<{
@@ -91,6 +97,33 @@ export class RequirementsServerRepository implements RequirementsRepository {
                     updated_at: new Date().toISOString(),
                 })
             }
+            return {id: requirementId, error: null};
+        } catch (error) {
+            if (error instanceof Error) {
+                return {id: '', error: error};
+            }
+            return {id: '', error: new Error('Error creating requirement')};
+        }
+    }
+
+    async mainCreateRequirement(
+        requirementId: string,
+        body: CreateRequirement
+    ): Promise<{
+        id: string,
+        error: FullError
+    }> {
+        try {
+            await db.transaction(async (tx) => {
+                const {_, errorCreateRequirement} = await this.createRequirement(tx, requirementId, body)
+                if (errorCreateRequirement) {
+                    throw errorCreateRequirement
+                }
+                const {__, errorCreateRequirementDetails} = await this.createRequirementDetail(tx, requirementId, body)
+                if (errorCreateRequirementDetails) {
+                    throw errorCreateRequirementDetails
+                }
+            });
             return {id: requirementId, error: null};
         } catch (error) {
             if (error instanceof Error) {
