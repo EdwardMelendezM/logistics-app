@@ -31,14 +31,14 @@ export async function createRequirementAction(formData: FormData) {
     }
 }
 
-
 export async function getRequirementsAction(pagination: { page: number, sizePage: number }) {
     try {
         const requirementsUseCase = getInjection("RequirementsUseCase")
-        const {requirements, pagination: paginationResults, error} = await requirementsUseCase.getRequirements({
-            page: pagination.page,
-            sizePage: pagination.sizePage
-        })
+        const {
+            requirements,
+            pagination: paginationResults,
+            error
+        } = await requirementsUseCase.getRequirements(pagination)
         return {
             requirements,
             pagination: paginationResults,

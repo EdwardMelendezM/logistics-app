@@ -24,21 +24,23 @@ export class RequirementsUCase implements RequirementsUseCase {
         error: FullError
     }> {
         try {
-            const results = await Promise.all([
-                this.requirementsRepository.getTotalRequirements(),
-                this.requirementsRepository.getRequirements(pagination)
-            ] as any);
-
-            const [totalResult, requirementsResult] = results;
-
-            const {total, error: errorGetTotalRequirement} = totalResult;
-            const {requirements, error: errorGetRequirement} = requirementsResult;
+            const {
+                requirements,
+                error: errorGetRequirement
+            } = await this.requirementsRepository.getRequirements(pagination)
+            const {total, error: errorGetTotalRequirement} = await this.requirementsRepository.getTotalRequirements()
 
             const paginationResults: PaginationResults = {
                 total,
                 page: pagination.page,
                 sizePage: pagination.sizePage
             }
+            console.log({
+                requirements,
+                paginationResults,
+                errorGetRequirement,
+                errorGetTotalRequirement
+            })
 
             if (errorGetTotalRequirement || errorGetRequirement) {
                 return {

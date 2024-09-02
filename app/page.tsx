@@ -1,8 +1,11 @@
-import {Button} from "@/components/ui/button";
 import {getRequirementsAction} from "@/app/actions/actions";
 
 export default function Home() {
-    const {requirements = [], error} = getRequirementsAction({page: 1, sizePage: 10})
+    const {requirements = [], error} = getRequirementsAction({page: 1, sizePage: 100})
+    console.log(requirements, error)
+    if (error) {
+        return <div>Error: {error.message}</div>
+    }
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
             ONICHAN

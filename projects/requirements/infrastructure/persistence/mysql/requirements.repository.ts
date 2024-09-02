@@ -1,8 +1,9 @@
 import {injectable} from "inversify";
-import type {MySqlTransaction} from "drizzle-orm/mysql-core/session";
 import {count, isNull} from "drizzle-orm";
+import type {MySqlTransaction} from "drizzle-orm/mysql-core/session";
 
 import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
+import {db} from "@/projects/shared/drizzle";
 
 import {
     requirementDetailsTable,
@@ -13,7 +14,6 @@ import type {
     Requirement,
     CreateRequirement,
 } from "@/projects/requirements/domain/requirements.entity";
-import {db} from "@/projects/shared/drizzle";
 
 @injectable()
 export class RequirementsMySqlRepository implements RequirementsRepository {
