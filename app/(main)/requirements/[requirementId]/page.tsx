@@ -9,10 +9,9 @@ export type RequirementEditProp = {
 
 export default async function RequirementEditPage({params}: RequirementEditProp) {
     const {requirementId} = params
-    const requirementIdAux = requirementId === 'NEW' ? null : requirementId
+    const requirementIdAux = requirementId === 'new' ? null : requirementId
     const {requirement, error} = await getRequirementByIdAction(requirementIdAux)
-    console.log(requirement)
     return (
-        <RequirementEdit isEdit={requirementId !== "NEW"} requirement={requirement}/>
+        <RequirementEdit requirement={requirement}/>
     );
 }
