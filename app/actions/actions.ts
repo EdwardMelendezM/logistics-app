@@ -43,8 +43,8 @@ export async function getRequirementsAction(pagination: { page: number, sizePage
             requirements,
             pagination: {
                 total: 0,
-                page: pagination.page,
-                sizePage: pagination.sizePage
+                page: paginationResults.page,
+                sizePage: paginationResults.sizePage
             },
             error: null
         }
