@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import {count, isNull} from "drizzle-orm";
+import {count, eq, isNull, sql} from "drizzle-orm";
 import type {MySqlTransaction} from "drizzle-orm/mysql-core/session";
 
 import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
@@ -13,18 +13,56 @@ import {RequirementsRepository} from "@/projects/requirements/domain/requirement
 import type {
     Requirement,
     CreateRequirement,
+    RequirementDetails
 } from "@/projects/requirements/domain/requirements.entity";
+
+type RequirementMap = typeof requirementTable.$inferSelect
+type RequirementDetailMap = typeof requirementDetailsTable.$inferSelect
 
 @injectable()
 export class RequirementsMySqlRepository implements RequirementsRepository {
     async getRequirements(pagination: PaginationParams): Promise<{ requirements: Requirement[], error: FullError }> {
         try {
             const {page = 1, sizePage = 100} = pagination
-            const requirements = await db.select()
+            const results = await db.select({
+                requirement: requirementTable,
+                detail: requirementDetailsTable
+            })
                 .from(requirementTable)
+                .innerJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
                 .where(isNull(requirementTable.deleted_at))
                 .limit(sizePage)
-                .offset((page - 1) * sizePage)
+                .offset((page - 1) * sizePage) as { requirement: RequirementMap, detail: RequirementDetailMap }[]
+            const requirementsMap: Record<string, Requirement> = {};
+
+            for (const result of results) {
+                const requirement = result.requirement;
+                const detail = result.detail;
+
+                if (!requirementsMap[requirement.id]) {
+                    requirementsMap[requirement.id] = {
+                        id: requirement.id,
+                        description: requirement.description,
+                        status: requirement.status,
+                        priority: requirement.priority,
+                        created_at: requirement.created_at,
+                        updated_at: requirement.updated_at,
+                        details: []
+                    }
+                }
+
+                if (detail) {
+                    requirementsMap[requirement.id].details.push({
+                        id: detail.id,
+                        requirement_id: detail.requirement_id,
+                        description: detail.description,
+                        status: detail.status,
+                        created_at: detail.created_at,
+                        updated_at: detail.updated_at,
+                    });
+                }
+            }
+            const requirements = Object.values(requirementsMap);
 
             return {requirements, error: null};
         } catch (error) {

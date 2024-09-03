@@ -15,6 +15,16 @@ export default async function Home() {
                         <h2>{requirement.description}</h2>
                         <p>{requirement.status}</p>
                         <p>{requirement.priority}</p>
+                        <div>
+                            {
+                                requirement.details.map(detail => (
+                                    <div key={detail.id} className="flex flex-col">
+                                        <p>{detail.description}</p>
+                                        <p>{detail.status}</p>
+                                    </div>
+                                ))
+                            }
+                        </div>
                     </div>
                 ))
             }
