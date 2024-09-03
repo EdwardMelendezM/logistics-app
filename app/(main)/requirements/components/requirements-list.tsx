@@ -42,7 +42,6 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
     }, []);
     return (
         <>
-            <span className='text-lg font-semibold'>Requerimientos</span>
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2 w-full">
                     <div className="relative w-full">
@@ -103,7 +102,6 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                 </TableBody>
             </Table>
         </>
-
     );
 }
 
