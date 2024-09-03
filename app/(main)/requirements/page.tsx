@@ -7,7 +7,7 @@ export default async function Home() {
         requirements = [] as Requirement[],
         pagination,
         error
-    } = await getRequirementsAction({page: 1, sizePage: 100})
+    } = await getRequirementsAction({page: 1, sizePage: 100}, {})
     return (
         <main className="flex min-h-screen flex-col">
             <RequirementsList requirements={requirements} pagination={pagination}/>

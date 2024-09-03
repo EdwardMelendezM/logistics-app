@@ -1,7 +1,12 @@
 import {inject, injectable} from "inversify";
 import {v4 as uuid} from 'uuid';
 
-import {FullError, PaginationParams, PaginationResults} from "@/projects/shared/results/domain/resullts.entity";
+import {
+    FullError,
+    PaginationParams,
+    PaginationResults,
+    SearchParamsRequirement
+} from "@/projects/shared/results/domain/resullts.entity";
 
 import type {
     CreateRequirementBody,
@@ -19,7 +24,25 @@ export class RequirementsUCase implements RequirementsUseCase {
     ) {
     }
 
-    async getRequirements(pagination: PaginationParams): Promise<{
+    async getRequirementById(requirementId: string): Promise<{ requirement: Requirement | null, error: FullError }> {
+        try {
+            const {
+                requirement,
+                error
+            } = await this.requirementsRepository.getRequirementById(requirementId)
+            return {
+                requirement,
+                error
+            }
+        } catch (error) {
+            return {
+                requirement: null,
+                error: error instanceof Error ? error : new Error('Unexpected error')
+            }
+        }
+    }
+
+    async getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
         requirements: Requirement[],
         pagination: PaginationResults,
         error: FullError
@@ -28,7 +51,7 @@ export class RequirementsUCase implements RequirementsUseCase {
             const {
                 requirements,
                 error: errorGetRequirement
-            } = await this.requirementsRepository.getRequirements(pagination)
+            } = await this.requirementsRepository.getRequirements(pagination, searchParams)
             const {total, error: errorGetTotalRequirement} = await this.requirementsRepository.getTotalRequirements()
 
             const paginationResults: PaginationResults = {

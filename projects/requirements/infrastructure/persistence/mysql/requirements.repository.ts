@@ -90,6 +90,62 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         }
     }
 
+    async getRequirementById(requirementId: string): Promise<{ requirement: Requirement | null, error: FullError }> {
+        try {
+            const results = await db.select({
+                requirement: requirementTable,
+                detail: requirementDetailsTable
+            })
+                .from(requirementTable)
+                .innerJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
+                .where(eq(requirementTable.id, requirementId))
+                .where(isNull(requirementTable.deleted_at)) as {
+                requirement: RequirementMap,
+                detail: RequirementDetailMap
+            }[]
+            const requirementsMap: Record<string, Requirement> = {};
+
+            for (const result of results) {
+                const requirement = result.requirement;
+                const detail = result.detail;
+
+                if (!requirementsMap[requirement.id]) {
+                    requirementsMap[requirement.id] = {
+                        id: requirement.id,
+                        description: requirement.description,
+                        status: requirement.status,
+                        priority: requirement.priority,
+                        created_at: requirement.created_at,
+                        updated_at: requirement.updated_at,
+                        details: []
+                    }
+                }
+
+                if (detail) {
+                    requirementsMap[requirement.id].details.push({
+                        id: detail.id,
+                        requirement_id: detail.requirement_id,
+                        description: detail.description,
+                        status: detail.status,
+                        created_at: detail.created_at,
+                        updated_at: detail.updated_at,
+                    });
+                }
+            }
+            const requirements = Object.values(requirementsMap);
+            if (requirements.length === 0) {
+                return {requirement: null, error: null};
+            }
+
+            return {requirement: requirements[0], error: null};
+        } catch (error) {
+            if (error instanceof Error) {
+                return {requirement: null, error: error};
+            }
+            return {requirement: null, error: new Error('Error getting requirement')};
+        }
+    }
+
     async createRequirement(
         tx: MySqlTransaction<any, any, any, any>,
         requirementId: string,

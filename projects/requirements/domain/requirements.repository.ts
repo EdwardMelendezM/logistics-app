@@ -1,6 +1,6 @@
 import type {MySqlTransaction} from "drizzle-orm/mysql-core/session";
 
-import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
+import {FullError, PaginationParams, SearchParamsRequirement} from "@/projects/shared/results/domain/resullts.entity";
 
 import type {
     CreateRequirement,
@@ -8,9 +8,14 @@ import type {
 } from "@/projects/requirements/domain/requirements.entity";
 
 export interface RequirementsRepository {
-    getRequirements(pagination: PaginationParams): Promise<{ requirements: Requirement[], error: FullError }>
+    getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
+        requirements: Requirement[],
+        error: FullError
+    }>
 
     getTotalRequirements(): Promise<{ total: number, error: FullError }>
+
+    getRequirementById(requirementId: string): Promise<{ requirement: Requirement | null, error: FullError }>
 
     createRequirement(
         tx: MySqlTransaction<any, any, any, any>,

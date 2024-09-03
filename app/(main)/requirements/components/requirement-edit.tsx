@@ -24,7 +24,7 @@ const formSchema = z.object({
 })
 
 export type RequirementEditProps = {
-    requirement: Requirement
+    requirement: Requirement | null
     isEdit: boolean
 }
 

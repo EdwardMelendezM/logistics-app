@@ -20,6 +20,11 @@ export type PaginationParams = {
     sizePage: number;
 }
 
+export type SearchParamsRequirement = {
+    search?: string;
+    requirementId?: string;
+}
+
 export type PaginationResults = {
     total: number;
     page: number;
