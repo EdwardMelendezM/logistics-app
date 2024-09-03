@@ -18,6 +18,8 @@ import {Edit2, Menu, Plus, Search, Trash2} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {useEffect, useState} from "react";
 import {format} from 'date-fns';
+import {useRouter} from "next/navigation";
+import TooltipFull from "@/components/tooltip-full";
 
 export type RequirementListProps = {
     requirements: Requirement[];
@@ -31,6 +33,8 @@ const RequirementStatuses = {
 }
 export const RequirementsList = ({requirements, pagination}: RequirementListProps) => {
     const [requirementsFull, setRequirementsFull] = useState<Requirement[]>([])
+
+    const router = useRouter()
     useEffect(() => {
         setRequirementsFull(requirements.map(requirement => {
             return {
@@ -55,7 +59,10 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                         </span>
                     </div>
                 </div>
-                <Button variant="default" size='sm' className='flex items-center px-3'>
+                <Button variant="default"
+                        size='sm'
+                        className='flex items-center px-3'
+                        onClick={() => router.push('/requirements/new')}>
                     <Plus size={15}/>
                     <span className='px-2'>Requerimiento</span>
                 </Button>
@@ -87,15 +94,25 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                                 {requirement.created_at.toString()}
                             </TableCell>
                             <TableCell className="text-center">
-                                <Button variant="primary" size='sm' className='text-green-400 px-2'>
-                                    <Edit2 size={15}/>
-                                </Button>
-                                <Button variant="primary" size='sm' className='text-blue-400 px-2'>
-                                    <Menu size={15}/>
-                                </Button>
-                                <Button variant="primary" size='sm' className='text-red-400 px-2'>
-                                    <Trash2 size={15}/>
-                                </Button>
+                                <TooltipFull title='Editar'>
+                                    <Button variant="primary"
+                                            size='sm'
+                                            className='text-green-400 px-2'
+                                            onClick={() => router.push(`/requirements/${requirement.id}`)}>
+                                        <Edit2 size={15}/>
+                                    </Button>
+                                </TooltipFull>
+                                <TooltipFull title='Ver detalles'>
+                                    <Button variant="primary" size='sm' className='text-blue-400 px-2'>
+                                        <Menu size={15}/>
+                                    </Button>
+                                </TooltipFull>
+                                <TooltipFull title='Eliminar'>
+                                    <Button variant="primary" size='sm' className='text-red-400 px-2'>
+                                        <Trash2 size={15}/>
+                                    </Button>
+                                </TooltipFull>
+
                             </TableCell>
                         </TableRow>
                     ))}
