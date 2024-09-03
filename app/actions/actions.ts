@@ -39,13 +39,13 @@ export async function getRequirementsAction(
 
 export async function getRequirementByIdAction(requirementId: string | null) {
     try {
-        const requirementsUseCase = getInjection("RequirementsUseCase")
         if (!requirementId) {
             return {
                 requirement: null,
                 error: null
             }
         }
+        const requirementsUseCase = getInjection("RequirementsUseCase")
         const {requirement, error} = await requirementsUseCase.getRequirementById(requirementId)
         return {
             requirement,

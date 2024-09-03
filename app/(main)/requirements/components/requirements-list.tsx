@@ -64,7 +64,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                         className='flex items-center px-3'
                         onClick={() => router.push('/requirements/new')}>
                     <Plus size={15}/>
-                    <span className='px-2'>Requerimiento</span>
+                    <span className='pl-2'>Requerimiento</span>
                 </Button>
             </div>
             <Table className='max-h-[50vh]'>

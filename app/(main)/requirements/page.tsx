@@ -1,5 +1,6 @@
-import {getRequirementsAction} from "@/app/actions/actions";
 import type {Requirement} from "@/projects/requirements/domain/requirements.entity";
+
+import {getRequirementsAction} from "@/app/actions/actions";
 import RequirementsList from "@/app/(main)/requirements/components/requirements-list";
 
 export default async function Home() {

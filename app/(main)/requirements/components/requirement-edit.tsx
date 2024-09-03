@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {Requirement} from "@/projects/requirements/domain/requirements.entity";
+import {useEffect} from "react";
 
 const formSchema = z.object({
     username: z.string().min(2, {
@@ -43,6 +44,12 @@ export function RequirementEdit({requirement, isEdit}: RequirementEditProps) {
         // ✅ This will be type-safe and validated.
         console.log(values)
     }
+
+    useEffect(() => {
+        if (requirement) {
+            console.log(requirement)
+        }
+    }, []);
 
     return (
         <Form {...form}>
