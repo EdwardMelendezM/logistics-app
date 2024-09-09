@@ -21,7 +21,7 @@ import {
 } from "@/projects/requirements/domain/requirements.entity";
 import {useEffect} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Edit2, Menu, Plus, Trash, Trash2} from "lucide-react";
+import {Plus, Trash} from "lucide-react";
 import {useRouter} from "next/navigation";
 
 import {toast} from "sonner"

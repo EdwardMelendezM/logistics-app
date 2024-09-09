@@ -102,7 +102,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 .where(and(isNull(requirementTable.deleted_at), isNull(requirementDetailsTable.deleted_at), eq(requirementTable.id, requirementId)))
 
             const requirementsMap: Record<string, any> = {};
-            console.log(results)
             for (const result of results) {
                 const requirement = result.requirement;
                 const detail = result.detail;
@@ -212,7 +211,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         try {
             // const now = formatISO(new Date());
             const now = formatISO(new Date(), {representation: 'complete'});
-            console.log(now)
             await db.transaction(async (tx) => {
                 await tx.insert(requirementTable).values({
                     id: requirementId,
