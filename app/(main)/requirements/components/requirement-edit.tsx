@@ -21,10 +21,12 @@ import {
 } from "@/projects/requirements/domain/requirements.entity";
 import {useEffect} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Plus, Trash} from "lucide-react";
+import {Edit2, Menu, Plus, Trash, Trash2} from "lucide-react";
 import {useRouter} from "next/navigation";
 
 import {toast} from "sonner"
+import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import TooltipFull from "@/components/tooltip-full";
 
 const formSchema = createRequirementBody
 
@@ -33,9 +35,6 @@ export type RequirementEditProps = {
 }
 
 export function RequirementEdit({requirement}: RequirementEditProps) {
-
-    const router = useRouter()
-
     const formRequirementEdit = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -45,6 +44,10 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
             details: [],
         },
     })
+
+    const router = useRouter()
+
+    const isLoading = formRequirementEdit.formState.isSubmitting
 
     const {fields, append, remove} = useFieldArray({
         control: formRequirementEdit.control,
@@ -71,7 +74,6 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                     console.error('There was an error!', err)
                 })
         } else {
-            console.log(values)
             fetch(`/api/v1/requirements/${requirement.id}`, {
                 method: 'PUT',
                 headers: {
@@ -107,7 +109,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                         <h1 className="text-2xl font-semibold">
                             {requirement ? "Editar Requerimiento" : "Nuevo Requerimiento"}
                         </h1>
-                        <Button type="submit" variant='default'>Guardar</Button>
+                        <Button type="submit"
+                                variant='default'
+                                disabled={isLoading}>Guardar</Button>
                     </div>
                     <FormField
                         control={formRequirementEdit.control}
@@ -118,7 +122,10 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                     Descripcion
                                 </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Adquisicion de cemento" {...field} />
+                                    <Input
+                                        {...field}
+                                        disabled={isLoading}
+                                        placeholder="Adquisicion de cemento"/>
                                 </FormControl>
                                 <FormDescription>
                                     Descripcion de la necesidad
@@ -136,11 +143,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                     Prioridad
                                 </FormLabel>
                                 <FormControl>
-                                    <Select
-                                        value={field.value || "high"}
-                                        onValueChange={(value) => field.onChange(value)}>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                         <SelectTrigger className="w-[180px]">
-                                            <SelectValue defaultValue={'high'}/>
+                                            <SelectValue/>
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="HIGH">Alta</SelectItem>
@@ -157,54 +162,82 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                         )}
                     />
                     <div>
-                        <div className="flex">
-                            <FormLabel className="flex-1">Descripcion</FormLabel>
-                            <FormLabel className="flex-1 pl-4">Cantidad</FormLabel>
-                            <FormLabel className="pl-2">Acciones</FormLabel>
+                        <div className='text-end'>
+                            <Button type="button"
+                                    size='sm'
+                                    onClick={() => append({description: "", quantity: '', id: null})}
+                                    disabled={isLoading}>
+                                <Plus size={20}/>
+                                <span className='pl-2'>DETALLE</span>
+                            </Button>
                         </div>
-                        {fields.map((item, index) => (
-                            <div key={item.id} className="flex space-x-4 space-y-1">
-                                {/* Campo de Descripción */}
-                                <FormField
-                                    control={formRequirementEdit.control}
-                                    name={`details.${index}.description`} // Especifica el campo de descripción
-                                    render={({field}) => (
-                                        <FormItem className="flex-1 flex flex-col">
-                                            <FormControl>
-                                                <Input placeholder={`Descripcion ${index + 1}`} {...field} />
-                                            </FormControl>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}
-                                />
-                                {/* Campo de Cantidad */}
-                                <FormField
-                                    control={formRequirementEdit.control}
-                                    name={`details.${index}.quantity`} // Especifica el campo de cantidad
-                                    render={({field}) => (
-                                        <FormItem className="flex-1 flex flex-col">
-                                            <FormControl>
-                                                <Input type="number" placeholder="Cantidad" {...field} />
-                                            </FormControl>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="flex flex-col space-y-4">
-                                    <Button type="button" variant="destructive" onClick={() => remove(index)}>
-                                        <Trash size={14}/>
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-                        <Button type="button" onClick={() => append({description: "", quantity: '', id: null})}>
-                            <Plus size={24}/>
-                        </Button>
-                        {
-                            formRequirementEdit.formState.errors.details && (
-                                <FormMessage title="Al menos un detalle es requerido"/>
-                            )
-                        }
+                        <Table className='max-h-[50vh]'>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[100px] text-center">Item</TableHead>
+                                    <TableHead className="text-center">Descripcion</TableHead>
+                                    <TableHead>Cantidad</TableHead>
+                                    <TableHead className="text-center">Acciones</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {fields.map((item, index) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell className="font-medium text-center">
+                                            {index + 1}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            {/* Campo de Descripción */}
+                                            <FormField
+                                                control={formRequirementEdit.control}
+                                                name={`details.${index}.description`} // Especifica el campo de descripción
+                                                render={({field}) => (
+                                                    <FormItem className="flex-1 flex flex-col">
+                                                        <FormControl>
+                                                            <Input {...field}
+                                                                   placeholder={`Descripcion ${index + 1}`}
+                                                                   disabled={isLoading}/>
+                                                        </FormControl>
+                                                        <FormMessage/>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            {/* Campo de Cantidad */}
+                                            <FormField
+                                                control={formRequirementEdit.control}
+                                                name={`details.${index}.quantity`} // Especifica el campo de cantidad
+                                                render={({field}) => (
+                                                    <FormItem className="flex-1 flex flex-col">
+                                                        <FormControl>
+                                                            <Input {...field}
+                                                                   type="number"
+                                                                   placeholder="Cantidad"
+                                                                   disabled={isLoading}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage/>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <TooltipFull title='Eliminar'>
+                                                <div className="flex flex-col space-y-4">
+                                                    <Button type="button"
+                                                            variant="destructive"
+                                                            onClick={() => remove(index)}
+                                                            disabled={isLoading}>
+                                                        <Trash size={14}/>
+                                                    </Button>
+                                                </div>
+                                            </TooltipFull>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </div>
 
                 </form>

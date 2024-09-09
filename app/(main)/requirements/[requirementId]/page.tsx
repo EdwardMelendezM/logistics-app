@@ -1,5 +1,5 @@
 import {RequirementEdit} from "@/app/(main)/requirements/components/requirement-edit";
-import {getRequirementByIdAction} from "@/app/actions/actions";
+import {getRequirementByIdAction} from "@/app/(main)/requirements/actions/actions";
 
 export type RequirementEditProp = {
     params: {
@@ -11,7 +11,6 @@ export default async function RequirementEditPage({params}: RequirementEditProp)
     const {requirementId} = params
     const requirementIdAux = requirementId === 'new' ? null : requirementId
     const {requirement, error} = await getRequirementByIdAction(requirementIdAux)
-    // console.log(requirement)
     return (
         <RequirementEdit requirement={requirement}/>
     );

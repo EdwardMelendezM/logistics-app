@@ -142,8 +142,11 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                                     </Button>
                                 </TooltipFull>
                                 <TooltipFull title='Eliminar'>
-                                    <Button variant="primary" size='sm' className='text-red-400 px-2'>
-                                        <Trash2 size={15} onClick={() => onDeleteRequirement(requirement.id)}/>
+                                    <Button variant="primary"
+                                            size='sm'
+                                            className='text-red-400 px-2'
+                                            onClick={() => onDeleteRequirement(requirement.id)}>
+                                        <Trash2 size={15}/>
                                     </Button>
                                 </TooltipFull>
 
