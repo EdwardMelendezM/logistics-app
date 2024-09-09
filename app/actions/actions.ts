@@ -46,9 +46,9 @@ export async function getRequirementByIdAction(requirementId: string | null) {
                 error: null
             }
         }
+        revalidatePath("/");
         const requirementsUseCase = getInjection("RequirementsUseCase")
         const {requirement, error} = await requirementsUseCase.getRequirementById(requirementId)
-        revalidatePath("/");
         return {
             requirement,
             error: null

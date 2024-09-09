@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import {count, eq, isNull} from "drizzle-orm";
+import {count, eq, isNull, sql} from "drizzle-orm";
 
 import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
 import {db} from "@/projects/shared/drizzle";
@@ -57,6 +57,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         id: detail.id,
                         requirement_id: detail.requirement_id,
                         description: detail.description,
+                        quantity: String(detail.quantity),
                         created_at: String(detail.created_at),
                         updated_at: String(detail.updated_at),
                     });
@@ -92,14 +93,15 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
 
     async getRequirementById(requirementId: string): Promise<{ requirement: Requirement | null, error: FullError }> {
         try {
+            console.log(requirementId, "onichan")
             const results = await db.select({
                 requirement: requirementTable,
                 detail: requirementDetailsTable
             })
                 .from(requirementTable)
                 .innerJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
-                .where(eq(requirementTable.id, requirementId))
-                .where(isNull(requirementTable.deleted_at)) as {
+                .where(isNull(requirementTable.deleted_at))
+                .where(eq(requirementTable.id, requirementId)) as {
                 requirement: RequirementMap,
                 detail: RequirementDetailMap
             }[]
@@ -136,6 +138,8 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
             if (requirements.length === 0) {
                 return {requirement: null, error: null};
             }
+            console.log(requirements[0], "onichan")
+            console.log("Cantidad", requirements.length)
 
             return {requirement: requirements[0], error: null};
         } catch (error) {

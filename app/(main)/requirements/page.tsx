@@ -9,7 +9,6 @@ export default async function Home() {
         pagination,
         error
     } = await getRequirementsAction({page: 1, sizePage: 100}, {})
-    console.log(requirements)
     return (
         <main className="flex min-h-screen flex-col">
             <RequirementsList requirements={requirements} pagination={pagination}/>

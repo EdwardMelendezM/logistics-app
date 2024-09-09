@@ -59,7 +59,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
             body: JSON.stringify(values)
         })
             .then(response => response.json())
-            .then(data => router.push(`/requirements/${data.id}`))
+            .then(data => {
+                router.push(`/requirements/${data.id}`)
+            })
             .catch(error => {
                 const err = JSON.stringify(error)
                 console.error('There was an error!', err)
@@ -116,9 +118,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                             <SelectValue defaultValue={'high'}/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="high">Alta</SelectItem>
-                                            <SelectItem value="medium">Media</SelectItem>
-                                            <SelectItem value="low">Baja</SelectItem>
+                                            <SelectItem value="HIGH">Alta</SelectItem>
+                                            <SelectItem value="MEDIUM">Media</SelectItem>
+                                            <SelectItem value="LOW">Baja</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
