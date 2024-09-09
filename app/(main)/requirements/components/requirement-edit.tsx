@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {
-    CreateRequirementBody,
     createRequirementBody,
     Requirement
 } from "@/projects/requirements/domain/requirements.entity";
@@ -48,7 +47,8 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
     })
 
     function onSubmit(values: z.infer<typeof formRequirementEdit>) {
-        console.log(values)
+        // Send values to endpoint /api/v1/requirements
+
     }
 
     useEffect(() => {

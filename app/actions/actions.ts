@@ -65,12 +65,10 @@ export async function createRequirementAction(formData: FormData) {
         const requirementsUseCase = getInjection("RequirementsUseCase")
         const {id, error} = await requirementsUseCase.createRequirement({
             description: data.description,
-            status: data.status,
             priority: data.priority,
             details: data.details.map(detail => ({
                 description: detail.description,
-                status: detail.status,
-                priority: detail.priority
+                quantity: detail.quantity,
             }))
         })
         revalidatePath("/");
