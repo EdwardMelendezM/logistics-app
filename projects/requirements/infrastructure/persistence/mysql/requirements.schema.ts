@@ -17,7 +17,6 @@ export const requirementDetailsTable = mysqlTable("requirement_details", {
         .references(() => requirementTable.id)
         .notNull(),
     description: varchar("description", {length: 255}).notNull(),
-    status: varchar("status", {length: 255}).notNull(),
     created_at: timestamp("created_at").notNull(),
     updated_at: timestamp("updated_at").notNull(),
     deleted_at: timestamp("deleted_at"),

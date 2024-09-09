@@ -56,7 +56,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         id: detail.id,
                         requirement_id: detail.requirement_id,
                         description: detail.description,
-                        status: detail.status,
                         created_at: detail.created_at,
                         updated_at: detail.updated_at,
                     });
@@ -126,7 +125,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         id: detail.id,
                         requirement_id: detail.requirement_id,
                         description: detail.description,
-                        status: detail.status,
                         created_at: detail.created_at,
                         updated_at: detail.updated_at,
                     });
@@ -186,7 +184,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                     id: detail.id,
                     requirement_id: requirementId,
                     description: detail.description,
-                    status: detail.status,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
                 })

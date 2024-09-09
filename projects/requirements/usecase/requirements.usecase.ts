@@ -95,18 +95,13 @@ export class RequirementsUCase implements RequirementsUseCase {
             const newRequirementId = uuid();
             const newRequirement: CreateRequirement = {
                 description: body.description,
-                status: body.status,
                 priority: body.priority,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
+                status: "NEW",
                 details: body.details.map(detail => ({
                     id: uuid(),
                     requirement_id: newRequirementId,
                     description: detail.description,
-                    status: detail.status,
-                    priority: detail.priority,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
+                    quantity: detail.quantity
                 }))
             }
             const {

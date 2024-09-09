@@ -48,7 +48,19 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
 
     function onSubmit(values: z.infer<typeof formRequirementEdit>) {
         // Send values to endpoint /api/v1/requirements
-
+        fetch('/api/v1/requirements', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values)
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => {
+                const err = JSON.stringify(error)
+                console.error('There was an error!', err)
+            })
     }
 
     useEffect(() => {
