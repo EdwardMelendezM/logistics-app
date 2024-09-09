@@ -10,6 +10,7 @@ export const requirementDetails = z.object({
     id: z.string(),
     requirement_id: z.string(),
     description: z.string().min(3).max(255),
+    quantity: z.string().min(1),
     created_at: z.string(),
     updated_at: z.string(),
 })

@@ -66,14 +66,18 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
     useEffect(() => {
         if (requirement) {
             formRequirementEdit.reset(requirement)
+            // formRequirementEdit.setValue('priority', requirement.priority)
         }
     }, []);
 
     return (
         <>
-            <h1 className="text-xl">Agregar requerimiento</h1>
             <Form {...formRequirementEdit} >
-                <form onSubmit={formRequirementEdit.handleSubmit(onSubmit)} className="space-y-8">
+                <form onSubmit={formRequirementEdit.handleSubmit(onSubmit)} className="space-y-3">
+                    <div className="flex justify-between">
+                        <h1 className="text-2xl font-semibold">Editar Requerimiento</h1>
+                        <Button type="submit" variant='default'>Guardar</Button>
+                    </div>
                     <FormField
                         control={formRequirementEdit.control}
                         name="description"
@@ -102,7 +106,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                 </FormLabel>
                                 <FormControl>
                                     <Select
-                                        value={field.value}
+                                        value={field.value || "high"}
                                         onValueChange={(value) => field.onChange(value)}>
                                         <SelectTrigger className="w-[180px]">
                                             <SelectValue defaultValue={'high'}/>
@@ -166,7 +170,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                             <Plus size={24}/>
                         </Button>
                     </div>
-                    <Button type="submit" variant='default'>Guardar</Button>
+
                 </form>
             </Form>
         </>

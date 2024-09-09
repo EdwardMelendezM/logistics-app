@@ -126,6 +126,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         id: detail.id,
                         requirement_id: detail.requirement_id,
                         description: detail.description,
+                        quantity: String(detail.quantity),
                         created_at: String(requirement.created_at),
                         updated_at: String(requirement.updated_at),
                     });
