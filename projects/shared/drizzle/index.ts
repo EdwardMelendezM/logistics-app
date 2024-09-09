@@ -1,12 +1,11 @@
 import mysql from "mysql2/promise";
-// import {DrizzleMySQLAdapter} from "@lucia-auth/adapter-drizzle";
 import {drizzle} from "drizzle-orm/mysql2";
 import * as requirement from "@/projects/requirements/infrastructure/persistence/mysql/requirements.schema";
 
 export const client = await mysql.createConnection({
     host: "localhost",
     user: "root",
-    database: "acosoDB",
+    database: "logistics_db",
     port: 3309,
     password: "secret"
 });

@@ -1,6 +1,5 @@
 import {injectable} from "inversify";
-import {count, eq, isNull, sql} from "drizzle-orm";
-import type {MySqlTransaction} from "drizzle-orm/mysql-core/session";
+import {count, eq, isNull} from "drizzle-orm";
 
 import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
 import {db} from "@/projects/shared/drizzle";
@@ -13,8 +12,10 @@ import {RequirementsRepository} from "@/projects/requirements/domain/requirement
 import type {
     Requirement,
     CreateRequirement,
-    RequirementDetails
 } from "@/projects/requirements/domain/requirements.entity";
+import {formatISO} from "date-fns";
+
+type Tx = typeof db & { rollback: () => void }
 
 type RequirementMap = typeof requirementTable.$inferSelect
 type RequirementDetailMap = typeof requirementDetailsTable.$inferSelect
@@ -45,8 +46,8 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         description: requirement.description,
                         status: requirement.status,
                         priority: requirement.priority,
-                        created_at: requirement.created_at,
-                        updated_at: requirement.updated_at,
+                        created_at: String(requirement.created_at),
+                        updated_at: String(requirement.updated_at),
                         details: []
                     }
                 }
@@ -56,8 +57,8 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         id: detail.id,
                         requirement_id: detail.requirement_id,
                         description: detail.description,
-                        created_at: detail.created_at,
-                        updated_at: detail.updated_at,
+                        created_at: String(detail.created_at),
+                        updated_at: String(detail.updated_at),
                     });
                 }
             }
@@ -114,8 +115,8 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         description: requirement.description,
                         status: requirement.status,
                         priority: requirement.priority,
-                        created_at: requirement.created_at,
-                        updated_at: requirement.updated_at,
+                        created_at: String(requirement.created_at),
+                        updated_at: String(requirement.updated_at),
                         details: []
                     }
                 }
@@ -125,8 +126,8 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         id: detail.id,
                         requirement_id: detail.requirement_id,
                         description: detail.description,
-                        created_at: detail.created_at,
-                        updated_at: detail.updated_at,
+                        created_at: String(requirement.created_at),
+                        updated_at: String(requirement.updated_at),
                     });
                 }
             }
@@ -145,7 +146,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
     }
 
     async createRequirement(
-        tx: MySqlTransaction<any, any, any, any>,
+        tx: Tx,
         requirementId: string,
         body: CreateRequirement
     ): Promise<{
@@ -153,14 +154,16 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         error: FullError
     }> {
         try {
-            tx.insert(requirementTable).values({
+            const now = "2024-09-09T11:02:12-05:00"
+            const exec = await db.insert(requirementTable).values({
                 id: requirementId,
                 priority: body.priority,
                 status: body.status,
                 description: body.description,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-            })
+                created_at: now,
+                updated_at: now,
+            }).prepare()
+            await exec.execute()
             return {id: requirementId, error: null};
         } catch (error) {
             if (error instanceof Error) {
@@ -171,7 +174,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
     }
 
     async createRequirementDetail(
-        tx: MySqlTransaction<any, any, any, any>,
+        tx: Tx,
         requirementId: string,
         body: CreateRequirement
     ): Promise<{
@@ -179,14 +182,17 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         error: FullError
     }> {
         try {
+            const now = "2024-09-09T11:02:12-05:00"
             for (const detail of body.details) {
-                await tx.insert(requirementDetailsTable).values({
+                const exec = await db.insert(requirementDetailsTable).values({
                     id: detail.id,
                     requirement_id: requirementId,
                     description: detail.description,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                })
+                    quantity: Number(detail.quantity),
+                    created_at: now,
+                    updated_at: now,
+                }).prepare()
+                await exec.execute()
             }
             return {id: requirementId, error: null};
         } catch (error) {
@@ -205,18 +211,29 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         error: FullError
     }> {
         try {
+            // const now = formatISO(new Date());
+            const now = formatISO(new Date(), {representation: 'complete'});
+            console.log(now)
             await db.transaction(async (tx) => {
-                const {_, errorCreateRequirement} = await this.createRequirement(tx, requirementId, body)
-                if (errorCreateRequirement) {
-                    tx.rollback()
-                    throw errorCreateRequirement
+                await tx.insert(requirementTable).values({
+                    id: requirementId,
+                    priority: body.priority,
+                    status: body.status,
+                    description: body.description,
+                    created_at: now,
+                    updated_at: now,
+                })
+                for (const detail of body.details) {
+                    await tx.insert(requirementDetailsTable).values({
+                        id: detail.id,
+                        requirement_id: requirementId,
+                        description: detail.description,
+                        quantity: Number(detail.quantity),
+                        created_at: now,
+                        updated_at: now,
+                    })
                 }
-                const {__, errorCreateRequirementDetails} = await this.createRequirementDetail(tx, requirementId, body)
-                if (errorCreateRequirementDetails) {
-                    tx.rollback()
-                    throw errorCreateRequirementDetails
-                }
-            });
+            })
             return {id: requirementId, error: null};
         } catch (error) {
             if (error instanceof Error) {

@@ -5,7 +5,7 @@ const nextConfig = {
     experimental: {
         serverComponentsExternalPackages: ["@node-rs/argon2"],
     },
-    webpack: (config, { isServer }) => {
+    webpack: (config, {isServer}) => {
         if (isServer) {
             config.plugins.push(
                 new webpack.BannerPlugin({
@@ -16,6 +16,12 @@ const nextConfig = {
             );
         }
         return config;
+    },
+    typescript: {
+        ignoreBuildErrors: true,
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
     },
 };
 

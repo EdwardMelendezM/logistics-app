@@ -7,7 +7,7 @@ export default defineConfig({
     dbCredentials: {
         host: "localhost",
         user: "root",
-        database: "acosoDB",
+        database: "logistics_db",
         port: 3309,
         password: "secret"
     },
