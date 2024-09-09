@@ -31,6 +31,13 @@ const RequirementStatuses = {
     PENDING: <Badge variant="secondary">PENDIENTE</Badge>,
     COMPLETED: <Badge variant="outline">COMPLETADO</Badge>,
 }
+
+const RequirementPriorities = {
+    HIGH: <Badge className="bg-red-400">ALTA</Badge>,
+    MEDIUM: <Badge className="bg-yellow-400">MEDIA</Badge>,
+    LOW: <Badge className="bg-green-400">BAJA</Badge>,
+}
+
 export const RequirementsList = ({requirements, pagination}: RequirementListProps) => {
     const [requirementsFull, setRequirementsFull] = useState<Requirement[]>([])
 
@@ -40,6 +47,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
             return {
                 ...requirement,
                 status: RequirementStatuses[requirement.status],
+                priority: RequirementPriorities[requirement.priority],
                 created_at: format(requirement.created_at, 'dd-MM-yyyy')
             }
         }));
@@ -72,23 +80,27 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px] text-center">Item</TableHead>
-                        <TableHead>Descripcion</TableHead>
                         <TableHead className="text-center">Estado</TableHead>
+                        <TableHead>Descripcion</TableHead>
                         <TableHead className="text-center">Detalles</TableHead>
+                        <TableHead className="text-center">Prioridad</TableHead>
                         <TableHead className="text-center">Fecha</TableHead>
                         <TableHead className="text-center">Acciones</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {requirementsFull.map((requirement, index) => (
-                        <TableRow key={requirement.id}>
+                        <TableRow key={requirement.id + '-' + index}>
                             <TableCell className="font-medium text-center">{index + 1}</TableCell>
-                            <TableCell>{requirement.description}</TableCell>
                             <TableCell className="text-center">
                                 {requirement.status}
                             </TableCell>
+                            <TableCell>{requirement.description}</TableCell>
                             <TableCell className="text-center">
                                 {requirement.details.length ?? 0}
+                            </TableCell>
+                            <TableCell className="text-center">
+                                {requirement.priority}
                             </TableCell>
                             <TableCell className="text-center">
                                 {requirement.created_at.toString()}

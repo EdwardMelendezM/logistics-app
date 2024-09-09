@@ -22,6 +22,7 @@ import {
 import {useEffect} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Plus, Trash} from "lucide-react";
+import {useRouter} from "next/navigation";
 
 const formSchema = createRequirementBody
 
@@ -30,7 +31,9 @@ export type RequirementEditProps = {
 }
 
 export function RequirementEdit({requirement}: RequirementEditProps) {
-    // 1. Define your formRequirementEdit.
+
+    const router = useRouter()
+
     const formRequirementEdit = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -56,7 +59,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
             body: JSON.stringify(values)
         })
             .then(response => response.json())
-            .then(data => console.log(data))
+            .then(data => router.push(`/requirements/${data.id}`))
             .catch(error => {
                 const err = JSON.stringify(error)
                 console.error('There was an error!', err)
@@ -66,7 +69,6 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
     useEffect(() => {
         if (requirement) {
             formRequirementEdit.reset(requirement)
-            // formRequirementEdit.setValue('priority', requirement.priority)
         }
     }, []);
 
@@ -75,7 +77,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
             <Form {...formRequirementEdit} >
                 <form onSubmit={formRequirementEdit.handleSubmit(onSubmit)} className="space-y-3">
                     <div className="flex justify-between">
-                        <h1 className="text-2xl font-semibold">Editar Requerimiento</h1>
+                        <h1 className="text-2xl font-semibold">
+                            {requirement ? "Editar Requerimiento" : "Nuevo Requerimiento"}
+                        </h1>
                         <Button type="submit" variant='default'>Guardar</Button>
                     </div>
                     <FormField

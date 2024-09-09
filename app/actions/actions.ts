@@ -15,6 +15,7 @@ export async function getRequirementsAction(
             pagination: paginationResults,
             error
         } = await requirementsUseCase.getRequirements(pagination, searchParams)
+        revalidatePath("/");
         return {
             requirements,
             pagination: {
@@ -47,6 +48,7 @@ export async function getRequirementByIdAction(requirementId: string | null) {
         }
         const requirementsUseCase = getInjection("RequirementsUseCase")
         const {requirement, error} = await requirementsUseCase.getRequirementById(requirementId)
+        revalidatePath("/");
         return {
             requirement,
             error: null
