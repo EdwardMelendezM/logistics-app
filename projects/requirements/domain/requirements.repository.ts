@@ -6,6 +6,7 @@ import type {
     CreateRequirement,
     Requirement
 } from "@/projects/requirements/domain/requirements.entity";
+import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
 
 export interface RequirementsRepository {
     getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
@@ -42,4 +43,17 @@ export interface RequirementsRepository {
         id: string,
         error: FullError
     }>
+
+    mainUpdateRequirement(
+        requirementId: string,
+        body: UpdateRequirementBody,
+        newRequirementDetails: Record<string, UpdateRequirementDetail> ,
+        updateExistingDetails: Record<string, UpdateRequirementDetail> ,
+        removeDetails: Record<string, UpdateRequirementDetail>
+    ): Promise<{
+        id: string,
+        error: FullError
+    }>
+
+    removeRequirement(requirementId: string): Promise<{ id: string, error: FullError }>
 }

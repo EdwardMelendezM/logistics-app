@@ -24,6 +24,8 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Plus, Trash} from "lucide-react";
 import {useRouter} from "next/navigation";
 
+import {toast} from "sonner"
+
 const formSchema = createRequirementBody
 
 export type RequirementEditProps = {
@@ -46,26 +48,49 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
 
     const {fields, append, remove} = useFieldArray({
         control: formRequirementEdit.control,
-        name: "details",
+        name: "details"
     })
 
     function onSubmit(values: z.infer<typeof formRequirementEdit>) {
-        // Send values to endpoint /api/v1/requirements
-        fetch('/api/v1/requirements', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(values)
-        })
-            .then(response => response.json())
-            .then(data => {
-                router.push(`/requirements/${data.id}`)
+        if (!requirement) {
+            fetch('/api/v1/requirements', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values)
             })
-            .catch(error => {
-                const err = JSON.stringify(error)
-                console.error('There was an error!', err)
+                .then(response => response.json())
+                .then(data => {
+                    toast.success('Requerimiento agregado')
+                    router.replace(`/requirements/${data.id}`)
+                })
+                .catch(error => {
+                    toast.error('Error agregando requerimiento')
+                    const err = JSON.stringify(error)
+                    console.error('There was an error!', err)
+                })
+        } else {
+            console.log(values)
+            fetch(`/api/v1/requirements/${requirement.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(values)
             })
+                .then(response => response.json())
+                .then(data => {
+                    toast.success('Requerimiento actualizado')
+                    router.replace(`/requirements/${data.id}`)
+                })
+                .catch(error => {
+                    toast.error('Error actualizando requerimiento')
+                    const err = JSON.stringify(error)
+                    console.error('There was an error!', err)
+                })
+        }
+
     }
 
     useEffect(() => {
@@ -172,9 +197,14 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                 </div>
                             </div>
                         ))}
-                        <Button type="button" onClick={() => append({description: "", quantity: 1})}>
+                        <Button type="button" onClick={() => append({description: "", quantity: '', id: null})}>
                             <Plus size={24}/>
                         </Button>
+                        {
+                            formRequirementEdit.formState.errors.details && (
+                                <FormMessage title="Al menos un detalle es requerido"/>
+                            )
+                        }
                     </div>
 
                 </form>

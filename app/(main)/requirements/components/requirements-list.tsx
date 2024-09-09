@@ -20,6 +20,8 @@ import {useEffect, useState} from "react";
 import {format} from 'date-fns';
 import {useRouter} from "next/navigation";
 import TooltipFull from "@/components/tooltip-full";
+import {useConfirm} from "@/hooks/use-confirm";
+import {toast} from "sonner";
 
 export type RequirementListProps = {
     requirements: Requirement[];
@@ -40,8 +42,28 @@ const RequirementPriorities = {
 
 export const RequirementsList = ({requirements, pagination}: RequirementListProps) => {
     const [requirementsFull, setRequirementsFull] = useState<Requirement[]>([])
-
     const router = useRouter()
+
+    const [ConfirmRemoveRequirement, confirmRemoveRequirement] = useConfirm(
+        'Eliminar requerimiento',
+        '¿Estas seguro de eliminar este requerimiento?')
+
+    const onDeleteRequirement = async (id: string) => {
+        const ok = await confirmRemoveRequirement()
+        if (!ok) {
+            return
+        }
+        fetch(`/api/v1/requirements/${id}`, {
+            method: 'DELETE',
+        }).then(() => {
+            toast.success("Requerimiento eliminado");
+            router.replace('/requirements')
+        }).catch((error) => {
+            toast.error("Error eliminando requerimiento");
+            console.log('Error deleting requirement', error)
+        })
+    }
+
     useEffect(() => {
         setRequirementsFull(requirements.map(requirement => {
             return {
@@ -121,7 +143,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                                 </TooltipFull>
                                 <TooltipFull title='Eliminar'>
                                     <Button variant="primary" size='sm' className='text-red-400 px-2'>
-                                        <Trash2 size={15}/>
+                                        <Trash2 size={15} onClick={() => onDeleteRequirement(requirement.id)}/>
                                     </Button>
                                 </TooltipFull>
 
@@ -130,6 +152,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                     ))}
                 </TableBody>
             </Table>
+            <ConfirmRemoveRequirement/>
         </>
     );
 }

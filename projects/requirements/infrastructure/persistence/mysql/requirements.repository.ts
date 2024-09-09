@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import {count, eq, isNull, sql} from "drizzle-orm";
+import {and, count, eq, isNull, sql} from "drizzle-orm";
 
 import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
 import {db} from "@/projects/shared/drizzle";
@@ -14,6 +14,7 @@ import type {
     CreateRequirement,
 } from "@/projects/requirements/domain/requirements.entity";
 import {formatISO} from "date-fns";
+import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
 
 type Tx = typeof db & { rollback: () => void }
 
@@ -30,8 +31,8 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 detail: requirementDetailsTable
             })
                 .from(requirementTable)
-                .innerJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
-                .where(isNull(requirementTable.deleted_at))
+                .leftJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
+                .where(and(isNull(requirementTable.deleted_at), isNull(requirementDetailsTable.deleted_at)))
                 .limit(sizePage)
                 .offset((page - 1) * sizePage) as { requirement: RequirementMap, detail: RequirementDetailMap }[]
             const requirementsMap: Record<string, Requirement> = {};
@@ -64,7 +65,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 }
             }
             const requirements = Object.values(requirementsMap);
-
             return {requirements, error: null};
         } catch (error) {
             if (error instanceof Error) {
@@ -93,20 +93,16 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
 
     async getRequirementById(requirementId: string): Promise<{ requirement: Requirement | null, error: FullError }> {
         try {
-            console.log(requirementId, "onichan")
             const results = await db.select({
                 requirement: requirementTable,
                 detail: requirementDetailsTable
             })
                 .from(requirementTable)
                 .innerJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
-                .where(isNull(requirementTable.deleted_at))
-                .where(eq(requirementTable.id, requirementId)) as {
-                requirement: RequirementMap,
-                detail: RequirementDetailMap
-            }[]
-            const requirementsMap: Record<string, Requirement> = {};
+                .where(and(isNull(requirementTable.deleted_at), isNull(requirementDetailsTable.deleted_at), eq(requirementTable.id, requirementId)))
 
+            const requirementsMap: Record<string, any> = {};
+            console.log(results)
             for (const result of results) {
                 const requirement = result.requirement;
                 const detail = result.detail;
@@ -131,6 +127,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         quantity: String(detail.quantity),
                         created_at: String(requirement.created_at),
                         updated_at: String(requirement.updated_at),
+                        deleted_at: String(requirement.deleted_at),
                     });
                 }
             }
@@ -138,9 +135,6 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
             if (requirements.length === 0) {
                 return {requirement: null, error: null};
             }
-            console.log(requirements[0], "onichan")
-            console.log("Cantidad", requirements.length)
-
             return {requirement: requirements[0], error: null};
         } catch (error) {
             if (error instanceof Error) {
@@ -190,7 +184,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
             const now = "2024-09-09T11:02:12-05:00"
             for (const detail of body.details) {
                 const exec = await db.insert(requirementDetailsTable).values({
-                    id: detail.id,
+                    id: detail.id!,
                     requirement_id: requirementId,
                     description: detail.description,
                     quantity: Number(detail.quantity),
@@ -230,7 +224,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 })
                 for (const detail of body.details) {
                     await tx.insert(requirementDetailsTable).values({
-                        id: detail.id,
+                        id: detail.id!,
                         requirement_id: requirementId,
                         description: detail.description,
                         quantity: Number(detail.quantity),
@@ -245,6 +239,98 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 return {id: '', error: error};
             }
             return {id: '', error: new Error('Error creating requirement')};
+        }
+    }
+
+    async mainUpdateRequirement(
+        requirementId: string,
+        body: UpdateRequirementBody,
+        newRequirementDetails: Record<string, UpdateRequirementDetail>,
+        updateExistingDetails: Record<string, UpdateRequirementDetail>,
+        removeDetails: Record<string, UpdateRequirementDetail>
+    ): Promise<{
+        id: string,
+        error: FullError
+    }> {
+        try {
+            const now = formatISO(new Date(), {representation: 'complete'});
+            await db.transaction(async (tx) => {
+                await tx.update(requirementTable)
+                    .set({
+                        description: body.description,
+                        priority: body.priority,
+                        status: "NEW",
+                        updated_at: now
+                    })
+                    .where(eq(requirementTable.id, requirementId))
+                    .prepare()
+                    .execute()
+                for (const detail of Object.values(newRequirementDetails)) {
+                    await tx.insert(requirementDetailsTable).values({
+                        id: detail.id!,
+                        requirement_id: requirementId,
+                        description: detail.description,
+                        quantity: Number(detail.quantity),
+                        created_at: now,
+                        updated_at: now,
+                        deleted_at: null
+                    }).prepare().execute()
+                }
+                for (const detail of Object.values(updateExistingDetails)) {
+                    await tx.update(requirementDetailsTable)
+                        .set({
+                            description: detail.description,
+                            quantity: Number(detail.quantity),
+                            updated_at: now
+                        })
+                        .where(eq(requirementDetailsTable.id, detail.id!))
+                        .prepare()
+                        .execute()
+                }
+                for (const detail of Object.values(removeDetails)) {
+                    await tx.update(requirementDetailsTable)
+                        .set({
+                            deleted_at: now
+                        })
+                        .where(eq(requirementDetailsTable.id, detail.id!))
+                        .prepare()
+                        .execute()
+                }
+            })
+            return {id: requirementId, error: null};
+        } catch (error) {
+            if (error instanceof Error) {
+                return {id: '', error: error};
+            }
+            return {id: '', error: new Error('Error updating requirement')};
+        }
+    }
+
+    async removeRequirement(requirementId: string): Promise<{ id: string, error: FullError }> {
+        try {
+            const now = formatISO(new Date(), {representation: 'complete'});
+            await db.transaction(async (tx) => {
+                await tx.update(requirementTable)
+                    .set({
+                        deleted_at: now
+                    })
+                    .where(eq(requirementTable.id, requirementId))
+                    .prepare()
+                    .execute()
+                await tx.update(requirementDetailsTable)
+                    .set({
+                        deleted_at: now
+                    })
+                    .where(eq(requirementDetailsTable.requirement_id, requirementId))
+                    .prepare()
+                    .execute()
+            })
+            return {id: requirementId, error: null};
+        } catch (error) {
+            if (error instanceof Error) {
+                return {id: '', error: error};
+            }
+            return {id: '', error: new Error('Error removing requirement')};
         }
     }
 }

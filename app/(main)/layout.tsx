@@ -1,6 +1,8 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import ModalProvider from "@/providers/modal-provider";
+import {ThemeProvider} from "next-themes";
+import {Toaster} from "@/components/sonner";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -13,9 +15,15 @@ export default function LogisticLayout({children}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <html lang="en" >
+        <body className={inter.className}>
+        {/*<ThemeProvider attribute="class" defaultTheme="system" enableSystem>*/}
+            {children}
+        {/*</ThemeProvider>*/}
+        <Toaster position="bottom-center"/>
         <ModalProvider/>
+        </body>
+
         </html>
     );
 }

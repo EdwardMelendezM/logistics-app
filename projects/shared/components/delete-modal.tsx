@@ -1,4 +1,6 @@
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "./ui/dialog";
+'use client'
+
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import useDeleteModal from "@/projects/shared/hooks/use-delete-modal";
 import {Button} from "@/components/ui/button";
 

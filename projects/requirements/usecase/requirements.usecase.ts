@@ -16,6 +16,7 @@ import type {
 import {RequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase";
 import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
 import {DI_SYMBOLS} from "@/projects/types";
+import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
 
 @injectable()
 export class RequirementsUCase implements RequirementsUseCase {
@@ -124,5 +125,94 @@ export class RequirementsUCase implements RequirementsUseCase {
 
     }
 
+    async updateRequirement(requirementId: string, body: UpdateRequirementBody): Promise<{
+        id: string,
+        error: FullError
+    }> {
+        try {
+            const {
+                requirement,
+                errorRequirementById
+            } = await this.requirementsRepository.getRequirementById(requirementId);
+            if (errorRequirementById || !requirement) {
+                throw new Error('Requirement not found');
+            }
 
+
+            const newRequirementDetails: Record<string, UpdateRequirementDetail> = {};
+            const updateExistingDetails: Record<string, UpdateRequirementDetail> = {};
+            const removeDetails: Record<string, UpdateRequirementDetail> = {};
+
+            // 1. Mapping details
+            for (const detail of body.details) {
+                const newId = detail.id || uuid();
+                newRequirementDetails[newId] = {
+                    id: newId,
+                    description: detail.description,
+                    quantity: detail.quantity,
+                };
+            }
+
+            // 2. Verify existing details
+            for (const detail of requirement.details) {
+                if (newRequirementDetails[detail.id]) {
+                    updateExistingDetails[detail.id] = newRequirementDetails[detail.id];
+                    delete newRequirementDetails[detail.id];
+                } else {
+                    removeDetails[detail.id] = detail;
+                }
+            }
+
+            console.log(removeDetails)
+
+            const newRequirement: CreateRequirement = {
+                description: body.description,
+                priority: body.priority,
+                status: "NEW",
+                details: []
+            }
+            const {
+                id,
+                error
+            } = await this.requirementsRepository.mainUpdateRequirement(
+                requirementId,
+                newRequirement,
+                newRequirementDetails,
+                updateExistingDetails,
+                removeDetails);
+            if (error) {
+                throw error;
+            }
+            return {
+                id,
+                error: null
+            }
+        } catch (error) {
+            return {
+                id: '',
+                error: error instanceof Error ? error : new Error('Unexpected error')
+            }
+        }
+    }
+
+    async removeRequirement(requirementId: string): Promise<{ id: string, error: FullError }> {
+        try {
+            const {
+                id,
+                error
+            } = await this.requirementsRepository.removeRequirement(requirementId);
+            if (error) {
+                throw error;
+            }
+            return {
+                id,
+                error: null
+            }
+        } catch (error) {
+            return {
+                id: '',
+                error: error instanceof Error ? error : new Error('Unexpected error')
+            }
+        }
+    }
 }
