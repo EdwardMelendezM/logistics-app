@@ -11,7 +11,8 @@ export default async function RequirementEditPage({params}: RequirementEditProp)
     const {requirementId} = params
     const requirementIdAux = requirementId === 'new' ? null : requirementId
     const {requirement, error} = await getRequirementByIdAction(requirementIdAux)
+
     return (
-        <RequirementEdit requirement={requirement}/>
+        <RequirementEdit requirement={requirement} />
     );
 }

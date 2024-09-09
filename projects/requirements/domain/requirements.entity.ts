@@ -44,10 +44,14 @@ export const createRequirement = z.object({
     details: z.array(createRequirementDetails),
 })
 
+export const createRequirementDetailsBody = z.object({
+    description: z.string().min(3).max(255),
+    quantity: z.string().min(1),
+})
+
 export const createRequirementBody = z.object({
     description: z.string().min(3).max(255),
-    status: z.string().min(3).max(255),
     priority: z.string().min(3).max(255),
-    details: z.array(createRequirementDetails),
+    details: z.array(createRequirementDetailsBody),
 })
 

@@ -15,14 +15,19 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
-import {createRequirementBody, Requirement} from "@/projects/requirements/domain/requirements.entity";
+import {
+    CreateRequirementBody,
+    createRequirementBody,
+    Requirement
+} from "@/projects/requirements/domain/requirements.entity";
 import {useEffect} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Plus, Trash} from "lucide-react";
 
 const formSchema = createRequirementBody
 
 export type RequirementEditProps = {
-    requirement: Requirement | null
+    requirement: Requirement | null,
 }
 
 export function RequirementEdit({requirement}: RequirementEditProps) {
@@ -37,12 +42,13 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
         },
     })
 
-    const { fields, append, remove } = useFieldArray({
+    const {fields, append, remove} = useFieldArray({
         control: formRequirementEdit.control,
         name: "details",
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof formRequirementEdit>) {
+        console.log(values)
     }
 
     useEffect(() => {
@@ -54,7 +60,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
     return (
         <>
             <h1 className="text-xl">Agregar requerimiento</h1>
-            <Form {...formRequirementEdit}>
+            <Form {...formRequirementEdit} >
                 <form onSubmit={formRequirementEdit.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
                         control={formRequirementEdit.control}
@@ -87,7 +93,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                         value={field.value}
                                         onValueChange={(value) => field.onChange(value)}>
                                         <SelectTrigger className="w-[180px]">
-                                            <SelectValue placeholder="Alta"/>
+                                            <SelectValue defaultValue={'high'}/>
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="high">Alta</SelectItem>
@@ -104,36 +110,51 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                         )}
                     />
                     <div>
-                        <FormLabel>Detalles</FormLabel>
+                        <div className="flex">
+                            <FormLabel className="flex-1">Descripcion</FormLabel>
+                            <FormLabel className="flex-1 pl-4">Cantidad</FormLabel>
+                            <FormLabel className="pl-2">Acciones</FormLabel>
+                        </div>
                         {fields.map((item, index) => (
-                            <FormField
-                                key={item.id}
-                                control={formRequirementEdit.control}
-                                name={`details.${index}`}
-                                render={({field}) => (
-                                    <FormItem className="flex items-center space-x-4">
-                                        <FormControl className="flex-1">
-                                            <Input placeholder={`Detalle ${index + 1}`} {...field} />
-                                        </FormControl>
-                                        <Button
-                                            type="button"
-                                            variant="destructive"
-                                            onClick={() => remove(index)}
-                                        >
-                                            Eliminar
-                                        </Button>
-                                    </FormItem>
-                                )}
-                            />
+                            <div key={item.id} className="flex space-x-4 space-y-1">
+                                {/* Campo de Descripción */}
+                                <FormField
+                                    control={formRequirementEdit.control}
+                                    name={`details.${index}.description`} // Especifica el campo de descripción
+                                    render={({field}) => (
+                                        <FormItem className="flex-1 flex flex-col">
+                                            <FormControl>
+                                                <Input placeholder={`Descripcion ${index + 1}`} {...field} />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                                {/* Campo de Cantidad */}
+                                <FormField
+                                    control={formRequirementEdit.control}
+                                    name={`details.${index}.quantity`} // Especifica el campo de cantidad
+                                    render={({field}) => (
+                                        <FormItem className="flex-1 flex flex-col">
+                                            <FormControl>
+                                                <Input type="number" placeholder="Cantidad" {...field} />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                                <div className="flex flex-col space-y-4">
+                                    <Button type="button" variant="destructive" onClick={() => remove(index)}>
+                                        <Trash size={14}/>
+                                    </Button>
+                                </div>
+                            </div>
                         ))}
-                        <Button
-                            type="button"
-                            onClick={() => append("")}
-                        >
-                            Añadir Detalle
+                        <Button type="button" onClick={() => append({description: "", quantity: 1})}>
+                            <Plus size={24}/>
                         </Button>
                     </div>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" variant='default'>Guardar</Button>
                 </form>
             </Form>
         </>
