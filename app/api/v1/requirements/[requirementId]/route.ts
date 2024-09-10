@@ -1,4 +1,3 @@
-// DELETE METHOD
 import {getInjection} from "@/projects/container";
 import {NextResponse} from "next/server";
 

@@ -54,7 +54,6 @@ export class RequirementsUCase implements RequirementsUseCase {
                 error: errorGetRequirement
             } = await this.requirementsRepository.getRequirements(pagination, searchParams)
             const {total, error: errorGetTotalRequirement} = await this.requirementsRepository.getTotalRequirements()
-
             const paginationResults: PaginationResults = {
                 total,
                 page: pagination.page,
@@ -68,7 +67,6 @@ export class RequirementsUCase implements RequirementsUseCase {
                     error: errorGetTotalRequirement || errorGetRequirement
                 }
             }
-
             return {
                 requirements,
                 pagination: paginationResults,

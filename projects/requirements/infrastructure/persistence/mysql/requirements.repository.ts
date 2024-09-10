@@ -1,7 +1,7 @@
 import {injectable} from "inversify";
-import {and, count, eq, isNull, sql} from "drizzle-orm";
+import {and, count, eq, isNull, like, sql} from "drizzle-orm";
 
-import {FullError, PaginationParams} from "@/projects/shared/results/domain/resullts.entity";
+import {FullError, PaginationParams, SearchParamsRequirement} from "@/projects/shared/results/domain/resullts.entity";
 import {db} from "@/projects/shared/drizzle";
 
 import {
@@ -23,18 +23,23 @@ type RequirementDetailMap = typeof requirementDetailsTable.$inferSelect
 
 @injectable()
 export class RequirementsMySqlRepository implements RequirementsRepository {
-    async getRequirements(pagination: PaginationParams): Promise<{ requirements: Requirement[], error: FullError }> {
+    async getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
+        requirements: Requirement[],
+        error: FullError
+    }> {
         try {
             const {page = 1, sizePage = 100} = pagination
+            const search = searchParams.search ? `%${searchParams.search}%` : '%'
             const results = await db.select({
                 requirement: requirementTable,
                 detail: requirementDetailsTable
             })
                 .from(requirementTable)
                 .leftJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
-                .where(and(isNull(requirementTable.deleted_at), isNull(requirementDetailsTable.deleted_at)))
+                .where(and(isNull(requirementTable.deleted_at), isNull(requirementDetailsTable.deleted_at), like(requirementTable.description, sql`${search}`)))
                 .limit(sizePage)
-                .offset((page - 1) * sizePage) as { requirement: RequirementMap, detail: RequirementDetailMap }[]
+                .offset((page - 1) * sizePage)
+                .orderBy(requirementTable.created_at) as { requirement: RequirementMap, detail: RequirementDetailMap }[]
             const requirementsMap: Record<string, Requirement> = {};
 
             for (const result of results) {
@@ -76,11 +81,10 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
 
     async getTotalRequirements(): Promise<{ total: number, error: FullError }> {
         try {
-            const total = await db.select({value: count()})
+            const [{value: total}] = await db.select({value: count()})
                 .from(requirementTable)
-                .where(isNull(requirementTable.deleted_at))
-
-            return {total: total as number, error: null};
+                .where(isNull(requirementTable.deleted_at));
+            return {total: total, error: null};
         } catch (error) {
             if (error instanceof Error) {
                 return {total: 0, error: error};

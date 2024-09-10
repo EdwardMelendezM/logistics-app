@@ -19,7 +19,7 @@ export async function getRequirementsAction(
         return {
             requirements,
             pagination: {
-                total: 0,
+                total: paginationResults.total,
                 page: paginationResults.page,
                 sizePage: paginationResults.sizePage
             },
@@ -56,31 +56,6 @@ export async function getRequirementByIdAction(requirementId: string | null) {
     } catch (error) {
         return {
             requirement: null,
-            error: error
-        }
-    }
-}
-
-export async function createRequirementAction(formData: FormData) {
-    try {
-        const data = Object.fromEntries(formData.entries()) as any
-        const requirementsUseCase = getInjection("RequirementsUseCase")
-        const {id, error} = await requirementsUseCase.createRequirement({
-            description: data.description,
-            priority: data.priority,
-            details: data.details.map(detail => ({
-                description: detail.description,
-                quantity: detail.quantity,
-            }))
-        })
-        revalidatePath("/");
-        return {
-            id,
-            error
-        }
-    } catch (error) {
-        return {
-            id: null,
             error: error
         }
     }

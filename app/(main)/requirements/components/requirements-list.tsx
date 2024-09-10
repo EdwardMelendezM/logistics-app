@@ -18,11 +18,12 @@ import {Edit2, Menu, Plus, Search, Trash2} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {useEffect, useState} from "react";
 import {format} from 'date-fns';
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import TooltipFull from "@/components/tooltip-full";
 import {useConfirm} from "@/hooks/use-confirm";
 import {toast} from "sonner";
-import {BreadcrumbWithCustomSeparator} from "@/components/bread-crumb";
+import qs from "query-string"
+import {PaginationList} from "@/components/pagination-list";
 
 export type RequirementListProps = {
     requirements: Requirement[];
@@ -43,7 +44,9 @@ const RequirementPriorities = {
 
 export const RequirementsList = ({requirements, pagination}: RequirementListProps) => {
     const [requirementsFull, setRequirementsFull] = useState<Requirement[]>([])
+
     const router = useRouter()
+    const params = useSearchParams()
 
     const [ConfirmRemoveRequirement, confirmRemoveRequirement] = useConfirm(
         'Eliminar requerimiento',
@@ -65,7 +68,21 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
         })
     }
 
+    const onFilter = (e) => {
+        const value = e.target.value;
+        const url = qs.stringifyUrl({
+            url: '/requirements',
+            query: {
+                search: value || null,
+                page: Number(params.get('page') ?? 1),
+                sizePage: Number(params.get('sizePage') ?? 100)
+            }
+        }, {skipEmptyString: true, skipNull: true})
+        router.push(url)
+    }
+
     useEffect(() => {
+        onFilter({target: {value: params.get('search')}})
         setRequirementsFull(requirements.map(requirement => {
             return {
                 ...requirement,
@@ -74,7 +91,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                 created_at: format(requirement.created_at, 'dd-MM-yyyy')
             }
         }));
-    }, []);
+    }, [requirements]);
     return (
         <>
             <div className="flex justify-between items-center mb-4">
@@ -83,6 +100,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                         <input
                             type="text"
                             placeholder="Buscar..."
+                            onChange={onFilter}
                             className="pl-10 py-1 border rounded w-full"
                         />
                         <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
@@ -99,7 +117,6 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                 </Button>
             </div>
             <Table className='max-h-[50vh]'>
-                <TableCaption>Lista de requerimientos.</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px] text-center">Item</TableHead>
@@ -150,12 +167,12 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                                         <Trash2 size={15}/>
                                     </Button>
                                 </TooltipFull>
-
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
+            <PaginationList paginationResult={pagination} path={'/requirements'}/>
             <ConfirmRemoveRequirement/>
         </>
     );
