@@ -4,7 +4,16 @@ import * as React from 'react'
 import Link from 'next/link'
 
 import {HamburgerMenuIcon} from "@radix-ui/react-icons"
-import {ChevronDown, ChevronUp, Package, FileText, DollarSign, ChevronLeft} from 'lucide-react'
+import {
+    ChevronDown,
+    ChevronUp,
+    Package,
+    FileText,
+    DollarSign,
+    ChevronLeft,
+    ClipboardList,
+    CreditCard
+} from 'lucide-react'
 import {Button} from '@/components/ui/button'
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/ui/collapsible'
 
@@ -19,14 +28,27 @@ const modules = [
     {
         name: 'Cotizaciones', icon: FileText, links: [
             {name: 'Pendientes', href: '/quotations'},
-            {name: 'Historico', href: '/quotations/history'},
-            {name: 'Reportes', href: '/quotations/reports'},
+            {name: 'Historico', href: '/'},
+            {name: 'Reportes', href: '/'},
         ]
     },
     {
-        name: 'Finanzas', icon: DollarSign, links: [
-            {name: 'Pendientes', href: '/finance'},
-            {name: 'Historico', href: '/finance/history'},
+        name: 'Ordenes', icon: ClipboardList, links: [
+            {name: 'Orden de compra', href: '/purchase-orders'},
+            {name: 'Orden de servicio', href: '/'},
+            {name: 'Orden de transferencia', href: '/'},
+        ]
+    },
+    {
+        name: 'Gastos', icon: CreditCard, links: [
+            {name: 'Pendientes', href: '/expenses'},
+            {name: 'Historico', href: '/'},
+        ]
+    },
+    {
+        name: 'Ingresos', icon: DollarSign, links: [
+            {name: 'Pendientes', href: '/incomes'},
+            {name: 'Historico', href: '/'},
         ]
     },
 ]
@@ -52,7 +74,7 @@ export function Sidebar() {
             >
                 <div className="flex flex-col h-full">
                     <div className="p-4 border-b flex justify-between items-center">
-                        {isExpanded && <h2 className="font-semibold">Logistica</h2>}
+                        {isExpanded && <h2 className="font-semibold">Helper</h2>}
                         <Button
                             variant="ghost"
                             size="icon"
