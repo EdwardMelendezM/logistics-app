@@ -30,16 +30,36 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         try {
             const {page = 1, sizePage = 100} = pagination
             const search = searchParams.search ? `%${searchParams.search}%` : '%'
-            const results = await db.select({
-                requirement: requirementTable,
-                detail: requirementDetailsTable
+            const requirementFiltered = db.select({
+                id: requirementTable.id,
+                description: requirementTable.description,
+                status: requirementTable.status,
+                priority: requirementTable.priority,
+                created_at: requirementTable.created_at,
+                updated_at: requirementTable.updated_at,
             })
                 .from(requirementTable)
-                .leftJoin(requirementDetailsTable, eq(requirementTable.id, requirementDetailsTable.requirement_id))
-                .where(and(isNull(requirementTable.deleted_at), isNull(requirementDetailsTable.deleted_at), like(requirementTable.description, sql`${search}`)))
+                .where(and(isNull(requirementTable.deleted_at), like(requirementTable.description, sql`${search}`)))
                 .limit(sizePage)
                 .offset((page - 1) * sizePage)
-                .orderBy(requirementTable.created_at) as { requirement: RequirementMap, detail: RequirementDetailMap }[]
+                .orderBy(requirementTable.created_at).as('requirementFiltered') as any
+
+
+            const results = await db.select({
+                requirement: {
+                    id: requirementFiltered.id,
+                    description: requirementFiltered.description,
+                    status: requirementFiltered.status,
+                    priority: requirementFiltered.priority,
+                    created_at: requirementFiltered.created_at,
+                    updated_at: requirementFiltered.updated_at,
+                },
+                detail: requirementDetailsTable
+            })
+                .from(requirementDetailsTable)
+                .innerJoin(requirementFiltered, eq(requirementFiltered.id, requirementDetailsTable.requirement_id))
+                .where(isNull(requirementDetailsTable.deleted_at))
+                .orderBy(requirementDetailsTable.created_at) as { requirement: RequirementMap, detail: RequirementDetailMap }[]
             const requirementsMap: Record<string, Requirement> = {};
 
             for (const result of results) {

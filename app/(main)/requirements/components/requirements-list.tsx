@@ -131,7 +131,9 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                 <TableBody>
                     {requirementsFull.map((requirement, index) => (
                         <TableRow key={requirement.id + '-' + index}>
-                            <TableCell className="font-medium text-center">{index + 1}</TableCell>
+                            <TableCell className="font-medium text-center">
+                                {(pagination.page - 1) * pagination.sizePage + index + 1}
+                            </TableCell>
                             <TableCell className="text-center">
                                 {requirement.status}
                             </TableCell>
