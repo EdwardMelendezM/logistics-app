@@ -46,7 +46,7 @@ export const useConfirm = (title: string, message: string): [() => JSX.Element, 
                     </DialogHeader>
                     <DialogFooter className="pt-2">
                         <Button onClick={handleCancel} variant="outline">Cancelar</Button>
-                        <Button onClick={handleConfirm}>Aceptar</Button>
+                        <Button onClick={handleConfirm} variant="destructive">Aceptar</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

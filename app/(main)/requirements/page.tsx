@@ -10,12 +10,13 @@ export default async function Home() {
         pagination,
         error
     } = await getRequirementsAction({page: 1, sizePage: 100}, {})
+
     return (
         <>
             <BreadcrumbWithCustomSeparator items={[
                 {label: 'Inicio', href: '/'},
                 {label: 'Requerimientos', href: '/requirements'}]}/>
-            <RequirementsList requirements={requirements} pagination={pagination}/>L
+            <RequirementsList requirements={requirements} pagination={pagination}/>
         </>
     );
 }

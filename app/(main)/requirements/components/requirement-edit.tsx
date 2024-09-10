@@ -55,6 +55,10 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
     })
 
     function onSubmit(values: z.infer<typeof formRequirementEdit>) {
+        if (fields.length === 0) {
+            toast.error('Debe agregar al menos un detalle')
+            return
+        }
         if (!requirement) {
             fetch('/api/v1/requirements', {
                 method: 'POST',
@@ -123,6 +127,15 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
     useEffect(() => {
         if (requirement) {
             formRequirementEdit.reset(requirement)
+            return
+        }
+        formRequirementEdit.reset()
+        if (fields.length === 0) {
+            append({
+                description: "",
+                quantity: "",
+                id: null
+            })
         }
     }, []);
 
