@@ -44,7 +44,7 @@ export const createRequirement = z.object({
 })
 
 export const createRequirementDetailsBody = z.object({
-    id: z.string().nullable().optional(),
+    id: z.string().nullable(),
     description: z.string().min(1, "Descripcion es requerido").max(255),
     quantity: z.string().min(1, "Cantidad es requerido"),
 })

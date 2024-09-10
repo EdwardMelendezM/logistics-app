@@ -21,12 +21,13 @@ import {
 } from "@/projects/requirements/domain/requirements.entity";
 import {useEffect} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Plus, Trash} from "lucide-react";
+import {Plus, Save, Trash} from "lucide-react";
 import {useRouter} from "next/navigation";
 
 import {toast} from "sonner"
-import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import TooltipFull from "@/components/tooltip-full";
+import {useConfirm} from "@/hooks/use-confirm";
 
 const formSchema = createRequirementBody
 
@@ -39,9 +40,8 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             description: "",
-            status: "",
-            priority: "",
-            details: [],
+            priority: "MEDIUM",
+            details: []
         },
     })
 
@@ -49,7 +49,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
 
     const isLoading = formRequirementEdit.formState.isSubmitting
 
-    const {fields, append, remove} = useFieldArray({
+    const {fields, append, remove, insert} = useFieldArray({
         control: formRequirementEdit.control,
         name: "details"
     })
@@ -92,7 +92,32 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                     console.error('There was an error!', err)
                 })
         }
+    }
 
+    const [
+        ConfirmRemoveRequirementDetail,
+        confirmRemoveRequirementDetail
+    ] = useConfirm('Eliminar', '¿Estas seguro de eliminar este registro?')
+
+    const onAddNewRequirementDetail = () => {
+        append({
+            description: "",
+            quantity: "",
+            id: null // Usa null o una cadena vacía para indicar que el ID no está definido
+        });
+    }
+
+    const onRemoveRequirementDetail = async (index: number) => {
+        const detail = formRequirementEdit.getValues().details[index]
+        if (!detail.id) {
+            remove(index)
+            return
+        }
+        const ok = await confirmRemoveRequirementDetail()
+        if (!ok) {
+            return
+        }
+        console.log("Eliminar en el backend", detail.id)
     }
 
     useEffect(() => {
@@ -110,138 +135,142 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                             {requirement ? "Editar Requerimiento" : "Nuevo Requerimiento"}
                         </h1>
                         <Button type="submit"
-                                variant='default'
-                                disabled={isLoading}>Guardar</Button>
+                                variant='primary'
+                                disabled={isLoading}>
+                            <Save size={14}/>
+                            <span className='pl-2'>Guardar</span>
+                        </Button>
                     </div>
-                    <FormField
-                        control={formRequirementEdit.control}
-                        name="description"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>
-                                    Descripcion
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        disabled={isLoading}
-                                        placeholder="Adquisicion de cemento"/>
-                                </FormControl>
-                                <FormDescription>
-                                    Descripcion de la necesidad
-                                </FormDescription>
-                                <FormMessage title='Descripcion es requerido'/>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={formRequirementEdit.control}
-                        name="priority"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>
-                                    Prioridad
-                                </FormLabel>
-                                <FormControl>
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <SelectTrigger className="w-[180px]">
-                                            <SelectValue/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="HIGH">Alta</SelectItem>
-                                            <SelectItem value="MEDIUM">Media</SelectItem>
-                                            <SelectItem value="LOW">Baja</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormDescription>
-                                    Prioridad de la necesidad
-                                </FormDescription>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                    <div>
-                        <div className='text-end'>
-                            <Button type="button"
-                                    size='sm'
-                                    onClick={() => append({description: "", quantity: '', id: null})}
-                                    disabled={isLoading}>
-                                <Plus size={20}/>
-                                <span className='pl-2'>DETALLE</span>
-                            </Button>
-                        </div>
-                        <Table className='max-h-[50vh]'>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[100px] text-center">Item</TableHead>
-                                    <TableHead className="text-center">Descripcion</TableHead>
-                                    <TableHead>Cantidad</TableHead>
-                                    <TableHead className="text-center">Acciones</TableHead>
+                    <div className="grid grid-cols-12 gap-2">
+                        <FormField
+                            control={formRequirementEdit.control}
+                            name="description"
+                            render={({field}) => (
+                                <FormItem className='col-span-12 sm:col-span-10 '>
+                                    <FormLabel>
+                                        Descripcion
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isLoading}
+                                            placeholder="Adquisicion de cemento"/>
+                                    </FormControl>
+                                    <FormDescription>
+                                        Descripcion de la necesidad
+                                    </FormDescription>
+                                    <FormMessage title='Descripcion es requerido'/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={formRequirementEdit.control}
+                            name="priority"
+                            render={({field}) => (
+                                <FormItem className='col-span-12 sm:col-span-2'>
+                                    <FormLabel>
+                                        Prioridad
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="HIGH">Alta</SelectItem>
+                                                <SelectItem value="MEDIUM">Media</SelectItem>
+                                                <SelectItem value="LOW">Baja</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormDescription>
+                                        Prioridad de la necesidad
+                                    </FormDescription>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className='text-end'>
+                        <Button type="button"
+                                size='sm'
+                                onClick={() => onAddNewRequirementDetail()}
+                                disabled={isLoading}>
+                            <Plus size={14}/>
+                            <span className='pl-2'>DETALLE</span>
+                        </Button>
+                    </div>
+                    <Table className='max-h-[50vh]'>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[100px] text-center">Item</TableHead>
+                                <TableHead className="text-center">Descripcion</TableHead>
+                                <TableHead>Cantidad</TableHead>
+                                <TableHead className="text-center">Acciones</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {fields.map((item, index) => (
+                                <TableRow key={index}>
+                                    <TableCell className="font-medium text-center">
+                                        {index + 1}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        {/* Campo de Descripción */}
+                                        <FormField
+                                            control={formRequirementEdit.control}
+                                            name={`details.${index}.description`} // Especifica el campo de descripción
+                                            render={({field}) => (
+                                                <FormItem className="flex-1 flex flex-col">
+                                                    <FormControl>
+                                                        <Input {...field}
+                                                               placeholder={`Descripcion ${index + 1}`}
+                                                               disabled={isLoading}/>
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        {/* Campo de Cantidad */}
+                                        <FormField
+                                            control={formRequirementEdit.control}
+                                            name={`details.${index}.quantity`} // Especifica el campo de cantidad
+                                            render={({field}) => (
+                                                <FormItem className="flex-1 flex flex-col">
+                                                    <FormControl>
+                                                        <Input {...field}
+                                                               type="number"
+                                                               placeholder="Cantidad"
+                                                               disabled={isLoading}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <TooltipFull title='Eliminar'>
+                                            <div className="flex flex-col space-y-4">
+                                                <Button type="button"
+                                                        variant="destructive"
+                                                        onClick={() => onRemoveRequirementDetail(index, item.id)}
+                                                        disabled={isLoading}>
+                                                    <Trash size={14}/>
+                                                </Button>
+                                            </div>
+                                        </TooltipFull>
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {fields.map((item, index) => (
-                                    <TableRow key={item.id}>
-                                        <TableCell className="font-medium text-center">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            {/* Campo de Descripción */}
-                                            <FormField
-                                                control={formRequirementEdit.control}
-                                                name={`details.${index}.description`} // Especifica el campo de descripción
-                                                render={({field}) => (
-                                                    <FormItem className="flex-1 flex flex-col">
-                                                        <FormControl>
-                                                            <Input {...field}
-                                                                   placeholder={`Descripcion ${index + 1}`}
-                                                                   disabled={isLoading}/>
-                                                        </FormControl>
-                                                        <FormMessage/>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            {/* Campo de Cantidad */}
-                                            <FormField
-                                                control={formRequirementEdit.control}
-                                                name={`details.${index}.quantity`} // Especifica el campo de cantidad
-                                                render={({field}) => (
-                                                    <FormItem className="flex-1 flex flex-col">
-                                                        <FormControl>
-                                                            <Input {...field}
-                                                                   type="number"
-                                                                   placeholder="Cantidad"
-                                                                   disabled={isLoading}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage/>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <TooltipFull title='Eliminar'>
-                                                <div className="flex flex-col space-y-4">
-                                                    <Button type="button"
-                                                            variant="destructive"
-                                                            onClick={() => remove(index)}
-                                                            disabled={isLoading}>
-                                                        <Trash size={14}/>
-                                                    </Button>
-                                                </div>
-                                            </TooltipFull>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                            ))}
+                        </TableBody>
+                    </Table>
 
                 </form>
             </Form>
+            <ConfirmRemoveRequirementDetail/>
         </>
     )
 }
