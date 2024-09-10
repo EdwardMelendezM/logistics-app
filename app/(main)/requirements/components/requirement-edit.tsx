@@ -135,9 +135,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                             {requirement ? "Editar Requerimiento" : "Nuevo Requerimiento"}
                         </h1>
                         <Button type="submit"
-                                variant='primary'
+                                variant='default'
                                 disabled={isLoading}>
-                            <Save size={14}/>
+                            <Save size={15}/>
                             <span className='pl-2'>Guardar</span>
                         </Button>
                     </div>
@@ -194,10 +194,11 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                     <div className='text-end'>
                         <Button type="button"
                                 size='sm'
+                                variant='outline'
                                 onClick={() => onAddNewRequirementDetail()}
                                 disabled={isLoading}>
-                            <Plus size={14}/>
-                            <span className='pl-2'>DETALLE</span>
+                            <Plus size={15}/>
+                            <span className='pl-2'>Agregar</span>
                         </Button>
                     </div>
                     <Table className='max-h-[50vh]'>

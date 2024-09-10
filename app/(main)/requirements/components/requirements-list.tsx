@@ -22,6 +22,7 @@ import {useRouter} from "next/navigation";
 import TooltipFull from "@/components/tooltip-full";
 import {useConfirm} from "@/hooks/use-confirm";
 import {toast} from "sonner";
+import {BreadcrumbWithCustomSeparator} from "@/components/bread-crumb";
 
 export type RequirementListProps = {
     requirements: Requirement[];
