@@ -152,7 +152,7 @@ export const RequirementsList = ({requirements, pagination}: RequirementListProp
                                     <Button variant="primary"
                                             size='sm'
                                             className='text-green-400 px-2'
-                                            onClick={() => router.push(`/requirements/${requirement.id}`)}>
+                                            onClick={() => router.push(`/requirements/${requirement.id}/edit`)}>
                                         <Edit2 size={15}/>
                                     </Button>
                                 </TooltipFull>

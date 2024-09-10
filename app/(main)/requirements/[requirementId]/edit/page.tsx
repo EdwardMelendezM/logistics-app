@@ -1,23 +1,29 @@
+import {redirect} from "next/navigation";
+
 import {RequirementEdit} from "@/app/(main)/requirements/components/requirement-edit";
 import {getRequirementByIdAction} from "@/app/(main)/requirements/actions/actions";
 import {BreadcrumbWithCustomSeparator} from "@/components/bread-crumb";
 
 export type RequirementEditProp = {
     params: {
-        requirementId: string
+        requirementId: string | null
     }
 }
 
 export default async function RequirementEditPage({params}: RequirementEditProp) {
     const {requirementId} = params
-    const requirementIdAux = requirementId === 'new' ? null : requirementId
-    const {requirement, error} = await getRequirementByIdAction(requirementIdAux)
+    const {requirement, error} = await getRequirementByIdAction(requirementId)
+
+    if (!requirement) {
+        redirect('/requirements')
+        return
+    }
     return (
         <>
             <BreadcrumbWithCustomSeparator items={[
                 {label: 'Inicio', href: '/'},
                 {label: 'Requerimientos', href: '/requirements'},
-                {label: requirementIdAux ? 'Editar' : 'Crear', href: `/requirements/${requirementIdAux}`}
+                {label: 'Editar', href: `/requirements/${requirementId}`}
             ]}/>
             <RequirementEdit requirement={requirement}/>
         </>
