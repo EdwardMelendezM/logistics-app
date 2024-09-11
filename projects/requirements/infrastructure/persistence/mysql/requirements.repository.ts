@@ -1,22 +1,22 @@
-import {injectable} from "inversify";
-import {and, count, eq, isNull, like, sql} from "drizzle-orm";
+import { injectable } from "inversify";
+import { and, count, eq, isNull, like, sql } from "drizzle-orm";
 
-import {FullError, PaginationParams, SearchParamsRequirement} from "@/projects/shared/results/domain/resullts.entity";
-import {db} from "@/projects/shared/drizzle";
+import { FullError, PaginationParams, SearchParamsRequirement } from "@/projects/shared/results/domain/resullts.entity";
+import { db } from "@/projects/shared/drizzle";
 
 import {
     requirementDetailsTable,
     requirementTable
 } from "@/projects/requirements/infrastructure/persistence/mysql/requirements.schema";
-import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
+import { RequirementsRepository } from "@/projects/requirements/domain/requirements.repository";
 import type {
     Requirement,
     CreateRequirement,
 } from "@/projects/requirements/domain/requirements.entity";
-import {formatISO} from "date-fns";
-import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
+import { formatISO } from "date-fns";
+import { UpdateRequirementBody, UpdateRequirementDetail } from "@/projects/requirements/domain/requirements.entity";
 
-type Tx = typeof db & { rollback: () => void }
+export type Tx = typeof db & { rollback: () => void }
 
 type RequirementMap = typeof requirementTable.$inferSelect
 type RequirementDetailMap = typeof requirementDetailsTable.$inferSelect
@@ -28,7 +28,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         error: FullError
     }> {
         try {
-            const {page = 1, sizePage = 100} = pagination
+            const { page = 1, sizePage = 100 } = pagination
             const search = searchParams.search ? `%${searchParams.search}%` : '%'
             const requirementFiltered = db.select({
                 id: requirementTable.id,
@@ -90,24 +90,24 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 }
             }
             const requirements = Object.values(requirementsMap);
-            return {requirements, error: null};
+            return { requirements, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {requirements: [], error: error};
+                return { requirements: [], error: error };
             }
-            return {requirements: [], error: new Error('Error getting requirements')};
+            return { requirements: [], error: new Error('Error getting requirements') };
         }
     }
 
     async getTotalRequirements(): Promise<{ total: number, error: FullError }> {
         try {
-            const [{value: total}] = await db.select({value: count()})
+            const [{ value: total }] = await db.select({ value: count() })
                 .from(requirementTable)
                 .where(isNull(requirementTable.deleted_at));
-            return {total: total, error: null};
+            return { total: total, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {total: 0, error: error};
+                return { total: 0, error: error };
             }
             return {
                 total: 0, error: new Error('Error getting total requirements')
@@ -156,14 +156,14 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
             }
             const requirements = Object.values(requirementsMap);
             if (requirements.length === 0) {
-                return {requirement: null, error: null};
+                return { requirement: null, error: null };
             }
-            return {requirement: requirements[0], error: null};
+            return { requirement: requirements[0], error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {requirement: null, error: error};
+                return { requirement: null, error: error };
             }
-            return {requirement: null, error: new Error('Error getting requirement')};
+            return { requirement: null, error: new Error('Error getting requirement') };
         }
     }
 
@@ -186,12 +186,12 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 updated_at: now,
             }).prepare()
             await exec.execute()
-            return {id: requirementId, error: null};
+            return { id: requirementId, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {id: '', error: error};
+                return { id: '', error: error };
             }
-            return {id: '', error: new Error('Error creating requirement')};
+            return { id: '', error: new Error('Error creating requirement') };
         }
     }
 
@@ -216,12 +216,12 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                 }).prepare()
                 await exec.execute()
             }
-            return {id: requirementId, error: null};
+            return { id: requirementId, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {id: '', error: error};
+                return { id: '', error: error };
             }
-            return {id: '', error: new Error('Error creating requirement')};
+            return { id: '', error: new Error('Error creating requirement') };
         }
     }
 
@@ -234,7 +234,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
     }> {
         try {
             // const now = formatISO(new Date());
-            const now = formatISO(new Date(), {representation: 'complete'});
+            const now = formatISO(new Date(), { representation: 'complete' });
             await db.transaction(async (tx) => {
                 await tx.insert(requirementTable).values({
                     id: requirementId,
@@ -255,12 +255,12 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                     })
                 }
             })
-            return {id: requirementId, error: null};
+            return { id: requirementId, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {id: '', error: error};
+                return { id: '', error: error };
             }
-            return {id: '', error: new Error('Error creating requirement')};
+            return { id: '', error: new Error('Error creating requirement') };
         }
     }
 
@@ -275,7 +275,7 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
         error: FullError
     }> {
         try {
-            const now = formatISO(new Date(), {representation: 'complete'});
+            const now = formatISO(new Date(), { representation: 'complete' });
             await db.transaction(async (tx) => {
                 await tx.update(requirementTable)
                     .set({
@@ -319,18 +319,18 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                         .execute()
                 }
             })
-            return {id: requirementId, error: null};
+            return { id: requirementId, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {id: '', error: error};
+                return { id: '', error: error };
             }
-            return {id: '', error: new Error('Error updating requirement')};
+            return { id: '', error: new Error('Error updating requirement') };
         }
     }
 
     async removeRequirement(requirementId: string): Promise<{ id: string, error: FullError }> {
         try {
-            const now = formatISO(new Date(), {representation: 'complete'});
+            const now = formatISO(new Date(), { representation: 'complete' });
             await db.transaction(async (tx) => {
                 await tx.update(requirementTable)
                     .set({
@@ -347,12 +347,12 @@ export class RequirementsMySqlRepository implements RequirementsRepository {
                     .prepare()
                     .execute()
             })
-            return {id: requirementId, error: null};
+            return { id: requirementId, error: null };
         } catch (error) {
             if (error instanceof Error) {
-                return {id: '', error: error};
+                return { id: '', error: error };
             }
-            return {id: '', error: new Error('Error removing requirement')};
+            return { id: '', error: new Error('Error removing requirement') };
         }
     }
 }

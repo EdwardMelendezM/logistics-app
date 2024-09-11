@@ -1,12 +1,14 @@
-import type {MySqlTransaction} from "drizzle-orm/mysql-core/session";
+import type { MySqlTransaction } from "drizzle-orm/mysql-core/session";
+type Tx = typeof db & { rollback: () => void }
 
-import {FullError, PaginationParams, SearchParamsRequirement} from "@/projects/shared/results/domain/resullts.entity";
+import { FullError, PaginationParams, SearchParamsRequirement } from "@/projects/shared/results/domain/resullts.entity";
 
 import type {
     CreateRequirement,
     Requirement
 } from "@/projects/requirements/domain/requirements.entity";
-import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
+import { UpdateRequirementBody, UpdateRequirementDetail } from "@/projects/requirements/domain/requirements.entity";
+import { db } from "@/projects/shared/drizzle";
 
 export interface RequirementsRepository {
     getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
@@ -19,7 +21,7 @@ export interface RequirementsRepository {
     getRequirementById(requirementId: string): Promise<{ requirement: Requirement | null, error: FullError }>
 
     createRequirement(
-        tx: MySqlTransaction<any, any, any, any>,
+        tx: Tx,
         requirementId: string,
         body: CreateRequirement
     ): Promise<{
@@ -28,7 +30,7 @@ export interface RequirementsRepository {
     }>
 
     createRequirementDetail(
-        tx: MySqlTransaction<any, any, any, any>,
+        tx: Tx,
         requirementId: string,
         body: CreateRequirement
     ): Promise<{
@@ -47,8 +49,8 @@ export interface RequirementsRepository {
     mainUpdateRequirement(
         requirementId: string,
         body: UpdateRequirementBody,
-        newRequirementDetails: Record<string, UpdateRequirementDetail> ,
-        updateExistingDetails: Record<string, UpdateRequirementDetail> ,
+        newRequirementDetails: Record<string, UpdateRequirementDetail>,
+        updateExistingDetails: Record<string, UpdateRequirementDetail>,
         removeDetails: Record<string, UpdateRequirementDetail>
     ): Promise<{
         id: string,
