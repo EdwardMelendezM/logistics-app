@@ -1,10 +1,10 @@
 "use client"
 
-import {zodResolver} from "@hookform/resolvers/zod"
-import {useFieldArray, useForm} from "react-hook-form"
-import {z} from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useFieldArray, useForm } from "react-hook-form"
+import { z } from "zod"
 
-import {Button} from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
@@ -14,20 +14,20 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {Input} from "@/components/ui/input"
+import { Input } from "@/components/ui/input"
 import {
     createRequirementBody,
     Requirement
 } from "@/projects/requirements/domain/requirements.entity";
-import {useEffect} from "react";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Plus, Save, Trash} from "lucide-react";
-import {useRouter} from "next/navigation";
+import { useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Save, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import {toast} from "sonner"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { toast } from "sonner"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import TooltipFull from "@/components/tooltip-full";
-import {useConfirm} from "@/hooks/use-confirm";
+import { useConfirm } from "@/hooks/use-confirm";
 
 const formSchema = createRequirementBody
 
@@ -35,7 +35,7 @@ export type RequirementEditProps = {
     requirement: Requirement | null,
 }
 
-export function RequirementEdit({requirement}: RequirementEditProps) {
+export function RequirementEdit({ requirement }: RequirementEditProps) {
     const formRequirementEdit = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,12 +49,12 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
 
     const isLoading = formRequirementEdit.formState.isSubmitting
 
-    const {fields, append, remove, insert} = useFieldArray({
+    const { fields, append, remove, insert } = useFieldArray({
         control: formRequirementEdit.control,
         name: "details"
     })
 
-    function onSubmit(values: z.infer<typeof formRequirementEdit>) {
+    function onSubmit(values: z.infer<typeof formSchema>) {
         if (fields.length === 0) {
             toast.error('Debe agregar al menos un detalle')
             return
@@ -148,9 +148,9 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                             {requirement ? "Editar Requerimiento" : "Nuevo Requerimiento"}
                         </h1>
                         <Button type="submit"
-                                variant='default'
-                                disabled={isLoading}>
-                            <Save size={15}/>
+                            variant='default'
+                            disabled={isLoading}>
+                            <Save size={15} />
                             <span className='pl-2'>Guardar</span>
                         </Button>
                     </div>
@@ -158,7 +158,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                         <FormField
                             control={formRequirementEdit.control}
                             name="description"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className='col-span-12 sm:col-span-10 '>
                                     <FormLabel>
                                         Descripcion
@@ -167,19 +167,19 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                         <Input
                                             {...field}
                                             disabled={isLoading}
-                                            placeholder="Adquisicion de cemento"/>
+                                            placeholder="Adquisicion de cemento" />
                                     </FormControl>
                                     <FormDescription>
                                         Descripcion de la necesidad
                                     </FormDescription>
-                                    <FormMessage title='Descripcion es requerido'/>
+                                    <FormMessage title='Descripcion es requerido' />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={formRequirementEdit.control}
                             name="priority"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem className='col-span-12 sm:col-span-2'>
                                     <FormLabel>
                                         Prioridad
@@ -187,7 +187,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                     <FormControl>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <SelectTrigger className="w-[180px]">
-                                                <SelectValue/>
+                                                <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="HIGH">Alta</SelectItem>
@@ -199,18 +199,18 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                     <FormDescription>
                                         Prioridad de la necesidad
                                     </FormDescription>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </div>
                     <div className='text-end'>
                         <Button type="button"
-                                size='sm'
-                                variant='outline'
-                                onClick={() => onAddNewRequirementDetail()}
-                                disabled={isLoading}>
-                            <Plus size={15}/>
+                            size='sm'
+                            variant='outline'
+                            onClick={() => onAddNewRequirementDetail()}
+                            disabled={isLoading}>
+                            <Plus size={15} />
                             <span className='pl-2'>Agregar</span>
                         </Button>
                     </div>
@@ -234,14 +234,14 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                         <FormField
                                             control={formRequirementEdit.control}
                                             name={`details.${index}.description`} // Especifica el campo de descripción
-                                            render={({field}) => (
+                                            render={({ field }) => (
                                                 <FormItem className="flex-1 flex flex-col">
                                                     <FormControl>
                                                         <Input {...field}
-                                                               placeholder={`Descripcion ${index + 1}`}
-                                                               disabled={isLoading}/>
+                                                            placeholder={`Descripcion ${index + 1}`}
+                                                            disabled={isLoading} />
                                                     </FormControl>
-                                                    <FormMessage/>
+                                                    <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
@@ -251,16 +251,16 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                         <FormField
                                             control={formRequirementEdit.control}
                                             name={`details.${index}.quantity`} // Especifica el campo de cantidad
-                                            render={({field}) => (
+                                            render={({ field }) => (
                                                 <FormItem className="flex-1 flex flex-col">
                                                     <FormControl>
                                                         <Input {...field}
-                                                               type="number"
-                                                               placeholder="Cantidad"
-                                                               disabled={isLoading}
+                                                            type="number"
+                                                            placeholder="Cantidad"
+                                                            disabled={isLoading}
                                                         />
                                                     </FormControl>
-                                                    <FormMessage/>
+                                                    <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
@@ -269,10 +269,10 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
                                         <TooltipFull title='Eliminar'>
                                             <div className="flex flex-col space-y-4">
                                                 <Button type="button"
-                                                        variant="destructive"
-                                                        onClick={() => onRemoveRequirementDetail(index, item.id)}
-                                                        disabled={isLoading}>
-                                                    <Trash size={14}/>
+                                                    variant="destructive"
+                                                    onClick={() => onRemoveRequirementDetail(index)}
+                                                    disabled={isLoading}>
+                                                    <Trash size={14} />
                                                 </Button>
                                             </div>
                                         </TooltipFull>
@@ -284,7 +284,7 @@ export function RequirementEdit({requirement}: RequirementEditProps) {
 
                 </form>
             </Form>
-            <ConfirmRemoveRequirementDetail/>
+            <ConfirmRemoveRequirementDetail />
         </>
     )
 }

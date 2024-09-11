@@ -9,21 +9,21 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
-import {PaginationResults} from "@/projects/shared/results/domain/resullts.entity";
-import {useRouter, useSearchParams} from "next/navigation";
+import { PaginationResults } from "@/projects/shared/results/domain/resullts.entity";
+import { useRouter, useSearchParams } from "next/navigation";
 import qs from "query-string";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type PaginationListProps = {
     paginationResult: PaginationResults;
     path: string;
 };
 
-export function PaginationList({paginationResult, path}: PaginationListProps) {
+export function PaginationList({ paginationResult, path }: PaginationListProps) {
     const router = useRouter();
     const params = useSearchParams();
 
-    const {total, page, sizePage} = paginationResult;
+    const { total, page, sizePage } = paginationResult;
     const totalPages = Math.ceil(total / sizePage);
 
     const onChangePage = (newPage: number) => {
@@ -35,11 +35,11 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
                 sizePage: sizePage,
                 search: search
             }
-        }, {skipEmptyString: true, skipNull: true});
+        }, { skipEmptyString: true, skipNull: true });
         router.push(url);
     };
 
-    const onChangeSizePage = (newSizePage) => {
+    const onChangeSizePage = (newSizePage: number) => {
         const search = params.get('search') ?? '';
         const url = qs.stringifyUrl({
             url: path,
@@ -48,7 +48,7 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
                 sizePage: newSizePage,
                 search: search
             }
-        }, {skipEmptyString: true, skipNull: true});
+        }, { skipEmptyString: true, skipNull: true });
         router.push(url);
     };
 
@@ -61,9 +61,9 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
         <div className="flex flex-col sm:flex-row">
             <div className="relative">
                 <span className="absolute text-sm text-gray-500 top-2 right-8">Items</span>
-                <Select value={`${sizePage}`} onValueChange={(e) => onChangeSizePage(e)}>
+                <Select value={`${sizePage}`} onValueChange={(e: any) => onChangeSizePage(e)}>
                     <SelectTrigger className="w-[110px]">
-                        <SelectValue defaultValue={'10'}/>
+                        <SelectValue defaultValue={'10'} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="10">10</SelectItem>
@@ -87,7 +87,6 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
                                     onChangePage(page - 1);
                                 }
                             }}
-                            disabled={page === 1}
                         />
                     </PaginationItem>
 
@@ -106,12 +105,12 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
                                     1
                                 </PaginationLink>
                             </PaginationItem>
-                            {startPage > 2 && <PaginationItem><PaginationEllipsis/></PaginationItem>}
+                            {startPage > 2 && <PaginationItem><PaginationEllipsis /></PaginationItem>}
                         </>
                     )}
 
                     {/* Show page links */}
-                    {Array.from({length: endPage - startPage + 1}, (_, i) => startPage + i).map(p => (
+                    {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(p => (
                         <PaginationItem key={p}>
                             <PaginationLink
                                 href="#"
@@ -129,7 +128,7 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
                     {/* Show last page link if necessary */}
                     {endPage < totalPages && (
                         <>
-                            {endPage < totalPages - 1 && <PaginationItem><PaginationEllipsis/></PaginationItem>}
+                            {endPage < totalPages - 1 && <PaginationItem><PaginationEllipsis /></PaginationItem>}
                             <PaginationItem>
                                 <PaginationLink
                                     href="#"
@@ -153,7 +152,6 @@ export function PaginationList({paginationResult, path}: PaginationListProps) {
                                     onChangePage(page + 1);
                                 }
                             }}
-                            disabled={page === totalPages}
                         />
                     </PaginationItem>
                 </PaginationContent>

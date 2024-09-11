@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CLEAN ARCHITECTURE IN NEXT JS
 
-## Getting Started
+## Tools
+  - Next js 14.2.7
+  - Drizzle orm 0.32.1
+  - Zod 3.23.8
+  - Query string 9.1.0
+  - Inversify 6.0.2
+  - Reflect metadata 0.2.2
+  - Server actions
+  - Shadcn
+  - Mysql
 
-First, run the development server:
+## Layers
+- Domain: This layer contains the core entities of the application, as well as the definitions (interfaces) for the repository and use cases. It represents the business logic and rules.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Infrastructure: This layer provides the implementation of the repository interfaces defined in the domain layer. It handles the actual interaction with external systems like databases, APIs, and other services.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Use Case: This layer contains the implementation of the use case interfaces defined in the domain layer. It orchestrates the business logic and coordinates between the domain and infrastructure layers.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Interface: This layer is implicit and represents the external entry points, such as controllers, APIs, or user interfaces, that interact with the underlying layers.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+![Clean architecture](./public/clean_architecture.jpeg)
 
-## Learn More
+## Install
+  - Install dependencies
+  ```
+    bun install
+  ```
+  
+  - Create database with docker, run this:
+  ```
+  docker run --name mysql-db \
+        -e MYSQL_ROOT_PASSWORD=secret \drizzle-kit generate
+        -e MYSQL_DATABASE=logistics_db \
+        -p 3309:3306 \
+        -d mysql:8.0
 
-To learn more about Next.js, take a look at the following resources:
+  ```
+  - Migrate tables inside db with drizzle
+  ```
+  bun run drizzle-kit generate
+  ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  - Run app
+  ```
+  bun run dev
+  ```

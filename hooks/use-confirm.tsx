@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -7,15 +7,15 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const useConfirm = (title: string, message: string): [() => JSX.Element, () => Promise<unknown>] => {
     const [promise, setPromise] = useState<{
-        resolve: (value: boolean) => void | null,
-    }>(null)
+        resolve: (value: boolean) => void,
+    } | null>(null)
 
     const confirm = () => new Promise((resolve) => {
-        setPromise({resolve})
+        setPromise({ resolve })
     })
 
     const handleClose = () => {
@@ -40,6 +40,7 @@ export const useConfirm = (title: string, message: string): [() => JSX.Element, 
                         <DialogTitle>
                             {title}
                         </DialogTitle>
+
                         <DialogDescription>
                             {message}
                         </DialogDescription>
