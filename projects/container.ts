@@ -1,7 +1,7 @@
-import {Container} from "inversify";
+import { Container } from "inversify";
 
-import {RequirementsModule} from "@/projects/requirements/requirements.module";
-import {DI_RETURN_TYPES, DI_SYMBOLS} from "@/projects/types";
+import { RequirementsModule } from "@/projects/requirements/requirements.module";
+import { DI_RETURN_TYPES, DI_SYMBOLS } from "@/projects/types";
 
 const ApplicationContainer = new Container({
     defaultScope: "Singleton",
@@ -25,4 +25,4 @@ export function getInjection<K extends keyof typeof DI_SYMBOLS>(
     return ApplicationContainer.get(DI_SYMBOLS[symbol]);
 }
 
-export {ApplicationContainer};
+export { ApplicationContainer };

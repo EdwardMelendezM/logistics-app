@@ -2,10 +2,10 @@ import { injectable } from "inversify";
 
 import { FullError, PaginationParams, PaginationResults, SearchParamsRequirement } from "@/projects/shared/results/domain/resullts.entity";
 import { CreateRequirementBody, Requirement, UpdateRequirementBody } from "@/projects/requirements/domain/requirements.entity";
-import { RequirementsUsecaseInterface } from "../domain/requirements.usecase.interface";
+import { IRequirementsUseCase } from "../domain/requirements.usecase.interface";
 
 @injectable()
-export class MockRequirementsUseCase implements RequirementsUsecaseInterface {
+export class MockRequirementsUseCase implements IRequirementsUseCase {
   private _requirements: Requirement[];
 
   constructor() {

@@ -4,10 +4,10 @@ import {
     PaginationResults,
     SearchParamsRequirement
 } from "@/projects/shared/results/domain/resullts.entity";
-import type {Requirement, CreateRequirementBody} from "@/projects/requirements/domain/requirements.entity";
-import {UpdateRequirementBody} from "@/projects/requirements/domain/requirements.entity";
+import type { Requirement, CreateRequirementBody } from "@/projects/requirements/domain/requirements.entity";
+import { UpdateRequirementBody } from "@/projects/requirements/domain/requirements.entity";
 
-export interface RequirementsUsecaseInterface {
+export interface IRequirementsUseCase {
     getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
         requirements: Requirement[],
         pagination: PaginationResults,

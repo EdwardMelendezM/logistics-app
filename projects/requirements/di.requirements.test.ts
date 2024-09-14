@@ -1,24 +1,30 @@
 import "reflect-metadata";
 
-import { afterEach, beforeEach, expect, it } from "vitest";
-
 import {
-  destroyContainer,
-  getInjection,
-  initializeContainer,
+    destroyContainer,
+    getInjection,
+    initializeContainer,
 } from "@/projects/container";
-import { MockRequirementsUseCase } from "./usecase/requirements.usecase.mock";
+
+import {MockRequirementsUseCase} from "@/projects/requirements/usecase/requirements.usecase.mock";
+import {
+    MockRequirementsRepository
+} from "@/projects/requirements/infrastructure/persistence/mysql/requirements.repository.mock";
+import {afterEach, beforeEach, expect, it} from "vitest";
 
 beforeEach(() => {
-  initializeContainer();
+    initializeContainer();
 });
 
 afterEach(() => {
-  destroyContainer();
+    destroyContainer();
 });
 
-it("should use mock version of repos and usecases",
-  async () => {
-    const requirementsUseCase = getInjection("RequirementsUseCase");
-    expect(requirementsUseCase).toBeInstanceOf(MockRequirementsUseCase);
-  })
+it("should use mock version of repos and use cases",
+    async () => {
+        const requirementsRepository = getInjection("IRequirementsRepository");
+        expect(requirementsRepository).toBeInstanceOf(MockRequirementsRepository);
+
+        const requirementsUseCase = getInjection("IRequirementsUseCase");
+        expect(requirementsUseCase).toBeInstanceOf(MockRequirementsUseCase);
+    })

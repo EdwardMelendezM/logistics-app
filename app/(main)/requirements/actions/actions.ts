@@ -9,7 +9,7 @@ export async function getRequirementsAction(
     pagination: PaginationParams,
     searchParams: SearchParamsRequirement) {
     try {
-        const requirementsUseCase = getInjection("RequirementsUseCase")
+        const requirementsUseCase = getInjection("IRequirementsUseCase")
         const {
             requirements,
             pagination: paginationResults,
@@ -47,7 +47,7 @@ export async function getRequirementByIdAction(requirementId: string | null) {
             }
         }
         revalidatePath("/");
-        const requirementsUseCase = getInjection("RequirementsUseCase")
+        const requirementsUseCase = getInjection("IRequirementsUseCase")
         const {requirement, error} = await requirementsUseCase.getRequirementById(requirementId)
         return {
             requirement,

@@ -1,4 +1,4 @@
-type Tx = typeof db & { rollback: () => void }
+export type Tx = typeof db & { rollback: () => void }
 
 import { FullError, PaginationParams, SearchParamsRequirement } from "@/projects/shared/results/domain/resullts.entity";
 
@@ -9,7 +9,7 @@ import type {
 import { UpdateRequirementBody, UpdateRequirementDetail } from "@/projects/requirements/domain/requirements.entity";
 import { db } from "@/projects/shared/drizzle";
 
-export interface RequirementsRepositoryInterface {
+export interface IRequirementsRepository {
     getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
         requirements: Requirement[],
         error: FullError

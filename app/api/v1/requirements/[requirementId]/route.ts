@@ -14,7 +14,7 @@ export async function DELETE(request: Request, {params}: { params: DeleteRequire
                 {status: 400}
             );
         }
-        const requirementsUseCase = getInjection("RequirementsUseCase");
+        const requirementsUseCase = getInjection("IRequirementsUseCase");
 
         const {error} = await requirementsUseCase.removeRequirement(requirementId);
 
@@ -52,7 +52,7 @@ export async function PUT(request: Request, {params}: { params: DeleteRequiremen
                 {status: 400}
             );
         }
-        const requirementsUseCase = getInjection("RequirementsUseCase");
+        const requirementsUseCase = getInjection("IRequirementsUseCase");
 
         const {error} = await requirementsUseCase.updateRequirement(requirementId, {
             description: body.description,

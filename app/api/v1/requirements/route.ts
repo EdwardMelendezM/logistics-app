@@ -4,7 +4,7 @@ import { getInjection } from "@/projects/container";
 export async function POST(request: Request) {
     try {
         const data = await request.json();
-        const requirementsUseCase = getInjection("RequirementsUseCase");
+        const requirementsUseCase = getInjection("IRequirementsUseCase");
 
         const { id, error } = await requirementsUseCase.createRequirement({
             description: data.description,
