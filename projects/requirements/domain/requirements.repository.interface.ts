@@ -1,4 +1,3 @@
-import type { MySqlTransaction } from "drizzle-orm/mysql-core/session";
 type Tx = typeof db & { rollback: () => void }
 
 import { FullError, PaginationParams, SearchParamsRequirement } from "@/projects/shared/results/domain/resullts.entity";
@@ -10,7 +9,7 @@ import type {
 import { UpdateRequirementBody, UpdateRequirementDetail } from "@/projects/requirements/domain/requirements.entity";
 import { db } from "@/projects/shared/drizzle";
 
-export interface RequirementsRepository {
+export interface RequirementsRepositoryInterface {
     getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
         requirements: Requirement[],
         error: FullError

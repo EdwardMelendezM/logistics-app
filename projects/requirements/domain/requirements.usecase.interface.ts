@@ -7,7 +7,7 @@ import {
 import type {Requirement, CreateRequirementBody} from "@/projects/requirements/domain/requirements.entity";
 import {UpdateRequirementBody} from "@/projects/requirements/domain/requirements.entity";
 
-export interface RequirementsUseCase {
+export interface RequirementsUsecaseInterface {
     getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
         requirements: Requirement[],
         pagination: PaginationResults,

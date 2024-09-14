@@ -13,15 +13,15 @@ import type {
     Requirement,
     CreateRequirement
 } from "@/projects/requirements/domain/requirements.entity";
-import {RequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase";
-import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
+import {RequirementsUsecaseInterface} from "@/projects/requirements/domain/requirements.usecase.interface";
+import {RequirementsRepositoryInterface} from "@/projects/requirements/domain/requirements.repository.interface";
 import {DI_SYMBOLS} from "@/projects/types";
 import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
 
 @injectable()
-export class RequirementsUCase implements RequirementsUseCase {
+export class RequirementsUCase implements RequirementsUsecaseInterface {
     constructor(
-        @inject(DI_SYMBOLS.RequirementsRepository) private requirementsRepository: RequirementsRepository,
+        @inject(DI_SYMBOLS.RequirementsRepository) private requirementsRepository: RequirementsRepositoryInterface,
     ) {
     }
 

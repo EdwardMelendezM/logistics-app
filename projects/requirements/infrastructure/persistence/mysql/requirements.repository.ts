@@ -8,7 +8,7 @@ import {
     requirementDetailsTable,
     requirementTable
 } from "@/projects/requirements/infrastructure/persistence/mysql/requirements.schema";
-import { RequirementsRepository } from "@/projects/requirements/domain/requirements.repository";
+import { RequirementsRepositoryInterface } from "@/projects/requirements/domain/requirements.repository.interface";
 import type {
     Requirement,
     CreateRequirement,
@@ -22,7 +22,7 @@ type RequirementMap = typeof requirementTable.$inferSelect
 type RequirementDetailMap = typeof requirementDetailsTable.$inferSelect
 
 @injectable()
-export class RequirementsMySqlRepository implements RequirementsRepository {
+export class RequirementsMySqlRepository implements RequirementsRepositoryInterface {
     async getRequirements(pagination: PaginationParams, searchParams: SearchParamsRequirement): Promise<{
         requirements: Requirement[],
         error: FullError

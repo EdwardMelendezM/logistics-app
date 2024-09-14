@@ -1,5 +1,5 @@
-import {RequirementsRepository} from "@/projects/requirements/domain/requirements.repository";
-import {RequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase";
+import {RequirementsRepositoryInterface} from "@/projects/requirements/domain/requirements.repository.interface";
+import {RequirementsUsecaseInterface} from "@/projects/requirements/domain/requirements.usecase.interface";
 
 export const DI_SYMBOLS = {
     // Repositories
@@ -11,8 +11,8 @@ export const DI_SYMBOLS = {
 
 export interface DI_RETURN_TYPES {
     // Repositories
-    RequirementsRepository: RequirementsRepository
+    RequirementsRepository: RequirementsRepositoryInterface
 
     // Use Cases
-    RequirementsUseCase: RequirementsUseCase
+    RequirementsUseCase: RequirementsUsecaseInterface
 }

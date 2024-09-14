@@ -1,12 +1,12 @@
 import { injectable } from "inversify";
 
-import { RequirementsRepository } from "@/projects/requirements/domain/requirements.repository";
+import { RequirementsRepositoryInterface } from "@/projects/requirements/domain/requirements.repository.interface";
 import { FullError, PaginationParams, SearchParamsRequirement } from "@/projects/shared/results/domain/resullts.entity";
 import { CreateRequirement, Requirement, UpdateRequirementBody, UpdateRequirementDetail } from "@/projects/requirements/domain/requirements.entity";
 import { Tx } from "./requirements.repository";
 
 @injectable()
-export class MockRequirementsRepository implements RequirementsRepository {
+export class MockRequirementsRepository implements RequirementsRepositoryInterface {
   private _requirements: Requirement[];
 
   constructor() {

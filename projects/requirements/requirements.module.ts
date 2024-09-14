@@ -1,21 +1,21 @@
 import { DI_SYMBOLS } from "@/projects/types";
 import { ContainerModule, interfaces } from "inversify";
-import { RequirementsRepository } from "@/projects/requirements/domain/requirements.repository";
+import { RequirementsRepositoryInterface } from "@/projects/requirements/domain/requirements.repository.interface";
 import {
     RequirementsMySqlRepository
 } from "@/projects/requirements/infrastructure/persistence/mysql/requirements.repository";
-import { RequirementsUseCase } from "@/projects/requirements/domain/requirements.usecase";
+import { RequirementsUsecaseInterface } from "@/projects/requirements/domain/requirements.usecase.interface";
 import { RequirementsUCase } from "@/projects/requirements/usecase/requirements.usecase";
 import { MockRequirementsUseCase } from "./usecase/requirements.usecase.mock";
+import { MockRequirementsRepository } from "./infrastructure/persistence/mysql/requirements.repository.mock";
 
 const initializeRequirementModule = (bind: interfaces.Bind) => {
     if (process.env.NODE_ENV === "test") {
-        // MOCK
-        // bind<IRequirementsRepository>(DI_SYMBOLS.RequirementsRepository).to(MockRequirementsRepository);
-        bind<RequirementsUseCase>(DI_SYMBOLS.RequirementsRepository).to(MockRequirementsUseCase);
+        bind<RequirementsRepositoryInterface>(DI_SYMBOLS.RequirementsRepository).to(MockRequirementsRepository);
+        bind<RequirementsUsecaseInterface>(DI_SYMBOLS.RequirementsRepository).to(MockRequirementsUseCase);
     } else {
-        bind<RequirementsUseCase>(DI_SYMBOLS.RequirementsUseCase).to(RequirementsUCase);
-        bind<RequirementsRepository>(DI_SYMBOLS.RequirementsRepository).to(RequirementsMySqlRepository);
+        bind<RequirementsUsecaseInterface>(DI_SYMBOLS.RequirementsUseCase).to(RequirementsUCase);
+        bind<RequirementsRepositoryInterface>(DI_SYMBOLS.RequirementsRepository).to(RequirementsMySqlRepository);
     }
 }
 
