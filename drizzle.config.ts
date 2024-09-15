@@ -8,10 +8,10 @@ export default defineConfig({
     out: './drizzle',
     dialect: 'mysql', // 'postgresql' | 'mysql' | 'sqlite'
     dbCredentials: {
-        host: process.env.DB_HOST || '34.27.42.59',
+        host: process.env.DB_HOST || 'localhost',
         user: process.env.DB_USER || 'root',
         database: process.env.DB_NAME || 'logistics_db',
-        port: Number(process.env.DB_PORT) || 3306,
-        password: process.env.DB_PASSWORD || 'onichan'
+        port: Number(process.env.DB_PORT) || 3309,
+        password: process.env.DB_PASSWORD || 'secret'
     },
 });
