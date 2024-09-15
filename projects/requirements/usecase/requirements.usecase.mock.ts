@@ -23,16 +23,16 @@ export class MockRequirementsUseCase implements IRequirementsUseCase {
         description: 'Description 1',
         priority: 'HIGHT',
         status: 'NEW',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: "2021-09-01T00:00:00.000Z",
+        updated_at: "2021-09-01T00:00:00.000Z",
         details: [
           {
             id: '1',
             description: 'Description 1',
             quantity: '1',
             requirement_id: '1',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            created_at: "2021-09-01T00:00:00.000Z",
+            updated_at: "2021-09-01T00:00:00.000Z"
 
 
           }
@@ -42,18 +42,10 @@ export class MockRequirementsUseCase implements IRequirementsUseCase {
     return {
       requirements: this._requirements,
       pagination: {
-        total: this._requirements.length,
+        total: 0,
         page: 1,
         sizePage: 10
       },
-      error: null
-    }
-  }
-
-  async getTotalRequirements(): Promise<{ total: number; error: FullError; }> {
-    const count = this._requirements.length;
-    return {
-      total: count,
       error: null
     }
   }
@@ -78,15 +70,15 @@ export class MockRequirementsUseCase implements IRequirementsUseCase {
       description: body.description,
       priority: body.priority,
       status: "NEW",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: "2021-09-01T00:00:00.000Z",
+      updated_at: "2021-09-01T00:00:00.000Z",
       details: body.details.map((d) => ({
         id: d.id ?? '',
         quantity: d.quantity,
         description: d.description,
         requirement_id: newRequirementId,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        created_at: "2021-09-01T00:00:00.000Z",
+        updated_at: "2021-09-01T00:00:00.000Z"
       }))
     });
     return {
@@ -115,14 +107,14 @@ export class MockRequirementsUseCase implements IRequirementsUseCase {
       ...this._requirements[requirementIndex],
       description: body.description,
       priority: body.priority,
-      updated_at: new Date().toISOString(),
+      updated_at: "2021-09-01T00:00:00.000Z",
       details: body.details.map((d) => ({
         id: d.id ?? '',
         quantity: d.quantity,
         description: d.description,
         requirement_id: requirementId,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        created_at: "2021-09-01T00:00:00.000Z",
+        updated_at: "2021-09-01T00:00:00.000Z"
       }))
     }
     return {
@@ -133,9 +125,13 @@ export class MockRequirementsUseCase implements IRequirementsUseCase {
 
   async removeRequirement(requirementId: string): Promise<{ id: string, error: FullError }> {
     const requirementIndex = this._requirements.findIndex((r) => r.id === requirementId);
-    if (requirementIndex !== -1) {
-      this._requirements.splice(requirementIndex, 1);
+    if (requirementIndex === -1) {
+      return {
+        id: requirementId,
+        error: new Error('Requirement not found')
+      }
     }
+    this._requirements.splice(requirementIndex, 1);
     return {
       id: requirementId,
       error: null
