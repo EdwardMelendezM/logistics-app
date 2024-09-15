@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "15e09215-a6ec-4398-9d57-876d771ba249",
+  "id": "2373f4c9-51e0-4ac0-b344-7730bcf20281",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "requirement_details": {
@@ -28,9 +28,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "status": {
-          "name": "status",
-          "type": "varchar(255)",
+        "quantity": {
+          "name": "quantity",
+          "type": "int",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -39,14 +39,14 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "deleted_at": {
@@ -118,14 +118,14 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "deleted_at": {

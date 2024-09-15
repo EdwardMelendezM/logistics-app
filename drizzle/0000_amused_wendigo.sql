@@ -2,9 +2,9 @@ CREATE TABLE `requirement_details` (
 	`id` varchar(36) NOT NULL,
 	`requirement_id` varchar(36) NOT NULL,
 	`description` varchar(255) NOT NULL,
-	`status` varchar(255) NOT NULL,
-	`created_at` timestamp NOT NULL,
-	`updated_at` timestamp NOT NULL,
+	`quantity` int NOT NULL,
+	`created_at` timestamp,
+	`updated_at` timestamp,
 	`deleted_at` timestamp,
 	CONSTRAINT `requirement_details_id` PRIMARY KEY(`id`)
 );
@@ -14,8 +14,8 @@ CREATE TABLE `requirements` (
 	`description` varchar(255) NOT NULL,
 	`status` varchar(255) NOT NULL,
 	`priority` varchar(255) NOT NULL,
-	`created_at` timestamp NOT NULL,
-	`updated_at` timestamp NOT NULL,
+	`created_at` timestamp,
+	`updated_at` timestamp,
 	`deleted_at` timestamp,
 	CONSTRAINT `requirements_id` PRIMARY KEY(`id`)
 );

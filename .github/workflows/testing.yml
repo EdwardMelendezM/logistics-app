@@ -14,10 +14,14 @@ jobs:
     - name: Add bun
       uses: oven-sh/setup-bun@v2
       with:
-        bun-version: 1.0.11
+        bun-version: 1.0.29
 
     - name: Install Dependencies
       run: bun i
 
     - name: Testing
       run: bun run test
+
+    - name: Build
+      run: bun run build
+
