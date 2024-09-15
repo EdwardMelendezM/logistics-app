@@ -70,7 +70,7 @@ export function RequirementEdit({ requirement }: RequirementEditProps) {
                 .then(response => response.json())
                 .then(data => {
                     toast.success('Requerimiento agregado')
-                    router.replace(`/requirements/${data.id}`)
+                    router.replace(`/requirements/${data.id}/edit`)
                 })
                 .catch(error => {
                     toast.error('Error agregando requerimiento')
@@ -88,7 +88,7 @@ export function RequirementEdit({ requirement }: RequirementEditProps) {
                 .then(response => response.json())
                 .then(data => {
                     toast.success('Requerimiento actualizado')
-                    router.replace(`/requirements/${data.id}`)
+                    router.replace(`/requirements/${data.id}/edit`)
                 })
                 .catch(error => {
                     toast.error('Error actualizando requerimiento')
@@ -121,7 +121,8 @@ export function RequirementEdit({ requirement }: RequirementEditProps) {
         if (!ok) {
             return
         }
-        console.log("Eliminar en el backend", detail.id)
+        remove(index)
+
     }
 
     useEffect(() => {

@@ -6,11 +6,11 @@ import {
     initializeContainer,
 } from "@/projects/container";
 
-import {MockRequirementsUseCase} from "@/projects/requirements/usecase/requirements.usecase.mock";
+import { MockRequirementsUseCase } from "@/projects/requirements/usecase/requirements.usecase.mock";
 import {
     MockRequirementsRepository
 } from "@/projects/requirements/infrastructure/persistence/mysql/requirements.repository.mock";
-import {afterEach, beforeEach, expect, it} from "vitest";
+import { afterEach, beforeEach, expect, it } from "vitest";
 
 beforeEach(() => {
     initializeContainer();

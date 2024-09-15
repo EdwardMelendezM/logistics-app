@@ -281,6 +281,7 @@ export class RequirementsMySqlRepository implements IRequirementsRepository {
                     .set({
                         description: body.description,
                         priority: body.priority,
+
                         status: "NEW",
                         updated_at: now
                     })
@@ -294,8 +295,7 @@ export class RequirementsMySqlRepository implements IRequirementsRepository {
                         description: detail.description,
                         quantity: Number(detail.quantity),
                         created_at: now,
-                        updated_at: now,
-                        deleted_at: null
+                        updated_at: now
                     }).prepare().execute()
                 }
                 for (const detail of Object.values(updateExistingDetails)) {

@@ -1,4 +1,4 @@
-import {z} from "zod"
+import { z } from "zod"
 
 export type Requirement = z.infer<typeof requirement>
 export type RequirementDetails = z.infer<typeof requirementDetails>

@@ -1,5 +1,5 @@
-import {inject, injectable} from "inversify";
-import {v4 as uuid} from 'uuid';
+import { inject, injectable } from "inversify";
+import { v4 as uuid } from 'uuid';
 
 import {
     FullError,
@@ -13,10 +13,10 @@ import type {
     Requirement,
     CreateRequirement
 } from "@/projects/requirements/domain/requirements.entity";
-import {IRequirementsUseCase} from "@/projects/requirements/domain/requirements.usecase.interface";
-import {IRequirementsRepository} from "@/projects/requirements/domain/requirements.repository.interface";
-import {DI_SYMBOLS} from "@/projects/types";
-import {UpdateRequirementBody, UpdateRequirementDetail} from "@/projects/requirements/domain/requirements.entity";
+import { IRequirementsUseCase } from "@/projects/requirements/domain/requirements.usecase.interface";
+import type { IRequirementsRepository } from "@/projects/requirements/domain/requirements.repository.interface";
+import { DI_SYMBOLS } from "@/projects/types";
+import { UpdateRequirementBody, UpdateRequirementDetail } from "@/projects/requirements/domain/requirements.entity";
 
 @injectable()
 export class RequirementsUCase implements IRequirementsUseCase {
@@ -53,7 +53,7 @@ export class RequirementsUCase implements IRequirementsUseCase {
                 requirements,
                 error: errorGetRequirement
             } = await this.requirementsRepository.getRequirements(pagination, searchParams)
-            const {total, error: errorGetTotalRequirement} = await this.requirementsRepository.getTotalRequirements()
+            const { total, error: errorGetTotalRequirement } = await this.requirementsRepository.getTotalRequirements()
             const paginationResults: PaginationResults = {
                 total,
                 page: pagination.page,
@@ -130,7 +130,7 @@ export class RequirementsUCase implements IRequirementsUseCase {
         try {
             const {
                 requirement,
-                errorRequirementById
+                error: errorRequirementById
             } = await this.requirementsRepository.getRequirementById(requirementId);
             if (errorRequirementById || !requirement) {
                 throw new Error('Requirement not found');
@@ -160,8 +160,6 @@ export class RequirementsUCase implements IRequirementsUseCase {
                     removeDetails[detail.id] = detail;
                 }
             }
-
-            console.log(removeDetails)
 
             const newRequirement: CreateRequirement = {
                 description: body.description,
