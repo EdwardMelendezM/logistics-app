@@ -1,0 +1,19 @@
+name: testing clean architecture in next js with bun
+jobs:
+  my-job:
+    runs-on: ubuntu-latest
+    steps:
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+    - name: Add bun
+      uses: oven-sh/setup-bun@v2
+      with:
+            bun-version: 1.0.11
+
+    - name: Install Dependencies
+      run: bun i
+
+    - name: Build Project
+      run: bun run tests
