@@ -20,4 +20,4 @@ jobs:
       run: bun i
 
     - name: Testing
-      run: bun run tests
+      run: bun run test
