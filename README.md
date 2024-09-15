@@ -40,6 +40,7 @@
   - Migrate tables inside db with drizzle
   ```
   bun run drizzle-kit generate
+  bun run drizzle-kit push
   ```
 
   - Run app
