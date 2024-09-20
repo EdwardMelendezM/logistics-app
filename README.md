@@ -1,5 +1,5 @@
 # CLEAN ARCHITECTURE IN NEXT JS
-
+![Project Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 ## Advantages
  - Maintainability: Makes it easier to update or modify code without impacting other layers.
  - Framework independence: Business logic is decoupled from specific frameworks.
