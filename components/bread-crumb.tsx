@@ -9,14 +9,14 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import {Fragment, useEffect, useState} from "react";
-import {Separator} from "@/components/ui/separator";
+import { Fragment, useEffect, useState } from "react";
+import { Separator } from "@/components/ui/separator";
 
 type BreadcrumbProps = {
     items: Array<{ label: string, href: string }>
 }
 
-export function BreadcrumbWithCustomSeparator({items}: BreadcrumbProps) {
+export function BreadcrumbWithCustomSeparator({ items }: BreadcrumbProps) {
 
     return (
         <>
@@ -33,13 +33,13 @@ export function BreadcrumbWithCustomSeparator({items}: BreadcrumbProps) {
                                 {/* Render separator only between items, not after the last item */}
                             </BreadcrumbItem>
                             {index < items.length - 1 && (
-                                <BreadcrumbSeparator/>
+                                <BreadcrumbSeparator />
                             )}
                         </Fragment>
                     ))}
                 </BreadcrumbList>
             </Breadcrumb>
-            <Separator className="mt-2 mb-3"/>
+            <Separator className="mt-2 mb-3" />
         </>
     )
 }
