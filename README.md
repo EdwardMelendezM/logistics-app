@@ -61,3 +61,5 @@
   ```
   bun run dev
   ```
+
+Bun is more faster than node
